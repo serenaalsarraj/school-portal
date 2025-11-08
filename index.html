@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Learning Hub</title>
+<style>
+    body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: #eef2f7;
+    }
+    .topbar {
+        background: #2c4bff;
+        color: white;
+        padding: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 1px;
+    }
+    .container {
+        padding: 15px;
+        max-width: 900px;
+        margin: auto;
+    }
+    .card {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #2c4bff;
+        border-radius: 8px;
+        font-size: 16px;
+        outline: none;
+    }
+    button {
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px;
+        background: #2c4bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #1f35b3;
+    }
+    .tiktok-btn {
+        background: black;
+    }
+    .tiktok-btn:hover {
+        background: #222;
+    }
+    .desc {
+        font-size: 14px;
+        color: #444;
+        text-align: center;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+
+<div class="topbar">Student Learning Hub</div>
+
+<div class="container">
+    <div class="card">
+        <input id="search" placeholder="Search learning videos..." />
+        <button onclick="openYouTube()">Search YouTube</button>
+        <button class="tiktok-btn" onclick="openTikTok()">Open LearningTok</button>
+        <p class="desc">* For research and learning purposes *</p>
+    </div>
+</div>
+
+<script>
+function openYouTube() {
+    let q = document.getElementById("search").value;
+    if(q.trim() !== "") {
+        window.open("https://www.youtube.com/results?search_query=" + encodeURIComponent(q), "_blank");
+    }
+}
+
+function openTikTok() {
+    window.open("https://www.tiktok.com", "_blank");
+}
+</script>
+
+</body>
+</html>
