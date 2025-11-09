@@ -8,17 +8,18 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: Poppins, sans-serif; }
 
 body {
-    background: url('https://wallpaperaccess.com/full/5651990.jpg');
+    background: url('https://images.pexels.com/photos/7130555/pexels-photo-7130555.jpeg');
     background-size: cover;
     background-position: center;
-    height: 100vh;
+    background-repeat: no-repeat;
+    min-height: 100vh;
     padding: 20px;
 }
 
 .glass {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(15px);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(18px);
+    border-radius: 18px;
     padding: 20px;
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -26,32 +27,34 @@ body {
 h1 {
     text-align: center;
     color: white;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    font-size: 26px;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
     margin-bottom: 15px;
 }
 
 #videoPlayer {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 14px;
     margin-bottom: 15px;
+    background: black;
 }
 
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
 }
 
 .video-card {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.25);
     backdrop-filter: blur(10px);
-    padding: 6px;
-    border-radius: 10px;
+    border-radius: 12px;
+    padding: 8px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: 0.25s;
 }
 .video-card:hover {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 .video-card img {
     width: 100%;
@@ -59,9 +62,10 @@ h1 {
 }
 .video-card p {
     color: white;
-    font-size: 12px;
+    font-size: 13px;
     text-align: center;
-    margin-top: 5px;
+    margin-top: 6px;
+    font-weight: 600;
 }
 </style>
 
@@ -72,39 +76,39 @@ h1 {
     <h1>✨ Chill Video Hub ✨</h1>
 
     <video id="videoPlayer" controls>
-        <source src="https://cdn.pixabay.com/video/2022/03/27/112213-692152391_tiny.mp4" type="video/mp4">
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
     </video>
 
     <div class="video-grid">
 
-        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2022/03/27/112213-692152391_tiny.mp4')">
-            <img src="https://i.ytimg.com/vi/ScMzIvxBSi4/maxresdefault.jpg">
+        <div class="video-card" onclick="playVideo('https://www.w3schools.com/html/mov_bbb.mp4')">
+            <img src="https://i.imgur.com/7v5ASc8.jpeg">
             <p>Chill Vibes</p>
         </div>
 
-        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2021/10/06/91496-628793471_tiny.mp4')">
-            <img src="https://images.pexels.com/videos/2611250/pexels-photo-2611250.jpeg">
-            <p>Ocean Aesthetic</p>
+        <div class="video-card" onclick="playVideo('https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4')">
+            <img src="https://i.imgur.com/5q1zZtK.jpeg">
+            <p>Pretty Flowers</p>
         </div>
 
-        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2020/04/19/36400-409264797_tiny.mp4')">
-            <img src="https://images.pexels.com/videos/856322/free-video-856322.jpg">
-            <p>Cute Animals</p>
+        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2015/08/05/1216-134366858_small.mp4')">
+            <img src="https://i.imgur.com/3XW8d8G.jpeg">
+            <p>Ocean Mood</p>
         </div>
 
-        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2019/10/21/28237-368861997_tiny.mp4')">
-            <img src="https://images.pexels.com/videos/1536314/airpods-apple-blur-close-up-1536314.jpeg">
-            <p>Tech Aesthetic</p>
+        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2016/04/14/2752-162660512_small.mp4')">
+            <img src="https://i.imgur.com/HpF4q4X.jpeg">
+            <p>Cute Cat</p>
         </div>
 
-        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2021/05/18/74600-552423682_tiny.mp4')">
-            <img src="https://images.pexels.com/videos/855565/free-video-855565.jpg">
-            <p>Doggo Moments</p>
+        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2020/05/31/40386-425501180_small.mp4')">
+            <img src="https://i.imgur.com/okYwfgf.jpeg">
+            <p>Space Relax</p>
         </div>
 
-        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2023/01/30/148806-794618577_tiny.mp4')">
-            <img src="https://images.pexels.com/videos/4761779/pexels-photo-4761779.jpeg">
-            <p>Food Mood 🍜</p>
+        <div class="video-card" onclick="playVideo('https://cdn.pixabay.com/video/2021/05/18/74600-552423682_small.mp4')">
+            <img src="https://i.imgur.com/U5Xk6wP.jpeg">
+            <p>Puppy Moments</p>
         </div>
 
     </div>
@@ -112,8 +116,10 @@ h1 {
 
 <script>
 function playVideo(src) {
-    document.getElementById("videoPlayer").src = src;
-    document.getElementById("videoPlayer").play();
+    const player = document.getElementById("videoPlayer");
+    player.src = src;
+    player.load();
+    player.play();
 }
 </script>
 
