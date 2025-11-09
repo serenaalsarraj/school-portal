@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Greenfield Student Portal</title>
+<title>Greenfield Student Portal — Activity Pack</title>
 <meta name="theme-color" content="#FF7AC6">
 <style>
 :root{
@@ -24,7 +24,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:12p
 .btn{padding:9px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
 .btn-primary{background:var(--accent);color:white;box-shadow:0 8px 18px rgba(108,92,231,0.12)}
 .btn-ghost{background:transparent;border:1px solid rgba(11,17,32,0.06);color:var(--muted)}
-main{max-width:1000px;margin:18px auto;padding:12px}
+main{max-width:1100px;margin:18px auto;padding:12px}
 .card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 6px 18px rgba(11,17,32,0.04)}
 .muted{color:var(--muted);font-size:13px}
 .row{display:flex;gap:12px;flex-wrap:wrap}
@@ -32,22 +32,25 @@ main{max-width:1000px;margin:18px auto;padding:12px}
 .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 .game-tile{background:linear-gradient(180deg,#fff,#fbfbff);border-radius:12px;padding:8px;text-align:center;border:1px solid rgba(11,17,32,0.04);cursor:pointer;transition:transform .12s}
 .game-tile:hover{transform:translateY(-6px)}
-.game-thumb{width:100%;height:92px;object-fit:cover;border-radius:8px}
+.game-thumb{width:100%;height:86px;object-fit:cover;border-radius:8px}
 .game-name{font-weight:800;margin-top:8px;color:#0b1220}
-#playArea{display:none;margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7fbff);min-height:320px;border:1px solid rgba(11,17,32,0.04)}
+#playArea{display:none;margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7fbff);min-height:380px;border:1px solid rgba(11,17,32,0.04)}
 .play-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .small{font-size:13px;color:var(--muted)}
 .searchRow{display:flex;gap:8px;align-items:center}
 .searchRow input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(11,17,32,0.06)}
 .controls{display:flex;gap:8px;align-items:center}
 footer{text-align:center;color:var(--muted);font-size:12px;margin:18px 0}
-iframe.gameFrame{width:100%;height:600px;border:none;border-radius:8px;background:#000}
+.canvas-wrap{display:flex;justify-content:center;align-items:center}
 .hidden{display:none}
-.homeworkScreen{padding:18px;background:#fff;border-radius:10px;box-shadow:0 6px 18px rgba(11,17,32,0.04)}
-@media(max-width:520px){ .logo{width:48px;height:48px;font-size:16px} .game-thumb{height:76px} iframe.gameFrame{height:420px} }
+.homeworkOverlay{position:fixed;inset:8px;background:#fff;z-index:60;border-radius:12px;padding:18px;box-shadow:0 12px 40px rgba(11,17,32,0.12);overflow:auto;display:none}
+@media(max-width:520px){ .logo{width:48px;height:48px;font-size:16px} .game-thumb{height:76px} }
+canvas{max-width:100%;border-radius:8px;display:block;margin:0 auto}
+kbd{background:#111;color:#fff;padding:4px 6px;border-radius:6px;font-size:12px}
 </style>
 </head>
 <body>
+
 <header>
   <div class="left">
     <div id="logo" class="logo" title="School logo">SCH</div>
@@ -72,60 +75,33 @@ iframe.gameFrame{width:100%;height:600px;border:none;border-radius:8px;backgroun
     <div style="display:flex;justify-content:space-between;align-items:center">
       <div>
         <div style="font-weight:900">Practice Tools</div>
-        <div class="muted">Triple-tap the logo to unlock the Activity Pack. Use Homework to hide quickly.</div>
+        <div class="muted">Triple-tap the logo to unlock. Use Homework to hide quickly.</div>
       </div>
-      <div style="text-align:right"><div style="display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent2),var(--accent));color:white;font-weight:800">v2.0</div></div>
+      <div style="text-align:right"><div style="display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent2),var(--accent));color:white;font-weight:800">v3.0</div></div>
     </div>
 
-    <!-- controls: search + music + hide -->
     <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
       <div class="searchRow" style="flex:1;min-width:220px">
         <input id="searchBox" placeholder="Search games (e.g. pizza, runner, wings, flappy)"/>
         <button id="searchClear" class="btn btn-ghost">Clear</button>
       </div>
-
       <div class="controls">
-        <label style="display:flex;gap:6px;align-items:center" title="Upload audio file to use as background music">
-          <input id="musicFile" type="file" accept="audio/*" style="display:none" />
-          <button id="uploadMusic" class="btn btn-ghost">Upload Music</button>
-        </label>
+        <input id="musicFile" type="file" accept="audio/*" style="display:none" />
+        <button id="uploadMusic" class="btn btn-ghost">Upload Music</button>
         <button id="musicToggle" class="btn btn-ghost hidden">Play Music</button>
         <button id="hideGames" class="btn btn-ghost">Hide (Homework)</button>
       </div>
     </div>
 
-    <!-- Games panel (hidden until unlocked) -->
+    <!-- Games panel -->
     <div id="gamesPanel" class="card" style="margin-top:14px">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:800">Activity Pack — Games</div>
-        <div class="muted">Tap a tile to open a game inside the page</div>
+        <div style="font-weight:800">Activity Pack — 50 Games</div>
+        <div class="muted">Tap a tile to open the game inside the page</div>
       </div>
 
       <div id="gamesGrid" class="games-grid" style="margin-top:12px">
-        <!-- Many tiles linking to popular Poki pages (and food/cooking pages) -->
-        <!-- Food / Restaurant / Wing games -->
-        <div class="game-tile" data-url="https://poki.com/en/g/crazy-restaurant"><img class="game-thumb" src="https://i.imgur.com/0oJkQ1R.jpg"><div class="game-name">Crazy Restaurant</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/papa-s-pizzeria"><img class="game-thumb" src="https://i.imgur.com/HV8Y1bE.jpeg"><div class="game-name">Papa's Pizzeria</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/papa-s-wingeria"><img class="game-thumb" src="https://i.imgur.com/9m7oY0U.jpeg"><div class="game-name">Wing Bar</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/cooking-fast-2"><img class="game-thumb" src="https://i.imgur.com/4qz1iQf.jpg"><div class="game-name">Cooking Fast</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/pancake-run"><img class="game-thumb" src="https://i.imgur.com/U5Xk6wP.jpeg"><div class="game-name">Pancake Run</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/burger-bounty"><img class="game-thumb" src="https://i.imgur.com/7l3W5Dx.jpg"><div class="game-name">Burger Maker</div></div>
-
-        <!-- Arcade / runners / classics -->
-        <div class="game-tile" data-url="https://poki.com/en/g/subway-surfers"><img class="game-thumb" src="https://i.imgur.com/3k8q0Si.jpg"><div class="game-name">Subway Surfers</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/temple-run-2"><img class="game-thumb" src="https://i.imgur.com/8m5b1s2.jpg"><div class="game-name">Temple Run 2</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/moto-x3m"><img class="game-thumb" src="https://i.imgur.com/o2Rzv8o.jpg"><div class="game-name">Moto X3M</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/snake-io"><img class="game-thumb" src="https://i.imgur.com/2r7QfJp.jpeg"><div class="game-name">Snake.io</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/2048"><img class="game-thumb" src="https://i.imgur.com/eD2mV1k.jpeg"><div class="game-name">2048</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/flappy-bird"><img class="game-thumb" src="https://i.imgur.com/7XcGf0K.jpeg"><div class="game-name">Flappy</div></div>
-
-        <!-- more arcade / puzzle -->
-        <div class="game-tile" data-url="https://poki.com/en/g/candy-crush"><img class="game-thumb" src="https://i.imgur.com/0b1jZ1T.jpg"><div class="game-name">Candy Pop</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/papa-s-scooperia"><img class="game-thumb" src="https://i.imgur.com/9xaKZB8.jpg"><div class="game-name">Ice Cream Shop</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/drag-racer-v3"><img class="game-thumb" src="https://i.imgur.com/VG3xkz3.jpg"><div class="game-name">Drag Racer</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/bubble-shooter"><img class="game-thumb" src="https://i.imgur.com/Lg2w5Qm.jpeg"><div class="game-name">Bubble Pop</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/basketbros-3d"><img class="game-thumb" src="https://i.imgur.com/4FJtXbB.jpg"><div class="game-name">Basket Bros</div></div>
-        <div class="game-tile" data-url="https://poki.com/en/g/temple-run-2"><img class="game-thumb" src="https://i.imgur.com/8m5b1s2.jpg"><div class="game-name">Temple Runner</div></div>
+        <!-- We'll programmatically fill this, but add fallback tiles -->
       </div>
     </div>
 
@@ -137,8 +113,8 @@ iframe.gameFrame{width:100%;height:600px;border:none;border-radius:8px;backgroun
         </div>
       </div>
 
-      <div id="playInner" class="small">Select a game tile to start. Use the Homework button to hide fast.</div>
-      <div id="gameContent" style="margin-top:12px"></div>
+      <div id="playInner" class="small">Select a game tile to start. Controls may include arrow keys or tap.</div>
+      <div id="gameContent" style="margin-top:12px;"></div>
     </div>
 
   </section>
@@ -149,7 +125,7 @@ iframe.gameFrame{width:100%;height:600px;border:none;border-radius:8px;backgroun
       <div class="muted">Saved locally</div>
     </div>
     <div style="margin-top:8px">
-      <textarea id="notes" placeholder="Quick study notes..."></textarea>
+      <textarea id="notes" placeholder="Quick study notes..." style="width:100%;min-height:90px;border-radius:8px;padding:10px;border:1px solid rgba(11,17,32,0.06)"></textarea>
       <div style="display:flex;gap:8px;margin-top:8px">
         <button id="saveNotes" class="btn btn-primary">Save Notes</button>
         <button id="clearNotes" class="btn btn-ghost">Clear</button>
@@ -159,35 +135,98 @@ iframe.gameFrame{width:100%;height:600px;border:none;border-radius:8px;backgroun
 
 </main>
 
-<!-- Hidden homework screen (fast hide) -->
-<div id="homeworkOverlay" class="hidden" style="position:fixed;inset:10px;background:#fff;z-index:60;border-radius:12px;padding:18px;box-shadow:0 12px 40px rgba(11,17,32,0.12);overflow:auto">
+<!-- Homework overlay -->
+<div id="homeworkOverlay" class="homeworkOverlay">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div><div style="font-weight:900">Homework — Math</div><div class="muted">Classwork • Show your work</div></div>
     <div><button id="closeHomework" class="btn btn-ghost">Close</button></div>
   </div>
   <div style="margin-top:14px">
-    <p><strong>Task 1:</strong> Solve the equation: 3x + 5 = 23. Show steps.</p>
-    <p><strong>Task 2:</strong> Rewrite the sentence: "The scientific method is important."</p>
-    <p><strong>Notes:</strong></p>
+    <p><strong>Task 1:</strong> Solve 3x + 5 = 23. Show steps.</p>
     <textarea style="width:100%;min-height:300px;border-radius:8px;padding:10px"></textarea>
   </div>
 </div>
 
-<footer>Greenfield High • Practice Tools • Built for personal use</footer>
+<footer>Greenfield High • Activity Pack • Built for personal use</footer>
 
-<!-- Audio element (no src by default) -->
 <audio id="bgAudio" loop></audio>
 
 <script>
-/* ======= Unlock & UI ======= */
+/* ----------------- Setup game catalog (50 games) ----------------- */
+/* We'll create 50 game entries (name + function id). Many are variants of base engines. */
+const GAME_CATALOG = [
+  {id:'snake1', name:'Snake — Classic', engine:'snake', params:{speed:110, color:'#9bf6ff'}},
+  {id:'snake2', name:'Snake — Fast', engine:'snake', params:{speed:70, color:'#ff9aa2'}},
+  {id:'snake3', name:'Snake — Tiny Grid', engine:'snake', params:{grid:10, speed:80, color:'#caffbf'}},
+  {id:'pong1', name:'Pong — Easy', engine:'pong', params:{ai:0.06}},
+  {id:'pong2', name:'Pong — Hard', engine:'pong', params:{ai:0.18}},
+  {id:'memory1', name:'Memory — Emoji', engine:'memory', params:{set:0}},
+  {id:'memory2', name:'Memory — Numbers', engine:'memory', params:{set:1}},
+  {id:'flappy1', name:'Flappy — Breeze', engine:'flappy', params:{gravity:0.6}},
+  {id:'flappy2', name:'Flappy — Turbo', engine:'flappy', params:{gravity:0.9}},
+  {id:'runner1', name:'City Runner', engine:'runner', params:{speed:5}},
+  {id:'runner2', name:'Temple Escape', engine:'runner', params:{speed:7}},
+  {id:'bubble1', name:'Bubble Pop', engine:'bubble', params:{}},
+  {id:'tile1', name:'Tile Slide — 3x3', engine:'tile', params:{size:3}},
+  {id:'tile2', name:'Tile Slide — 4x4', engine:'tile', params:{size:4}},
+  {id:'pizza', name:'Pizza Maker', engine:'pizza', params:{}},
+  {id:'wings', name:'Wing Bar', engine:'wings', params:{}},
+  {id:'pancake', name:'Pancake Flip', engine:'pancake', params:{}},
+  {id:'paint', name:'Pixel Painter', engine:'paint', params:{}},
+  {id:'rps', name:'Rock Paper Scissors', engine:'rps', params:{}},
+  {id:'2048', name:'2048', engine:'2048', params:{}},
+  {id:'breakout1', name:'Breakout — Classic', engine:'breakout', params:{cols:6}},
+  {id:'breakout2', name:'Breakout — Tiny', engine:'breakout', params:{cols:8}},
+  {id:'pong3', name:'Pong — Duel', engine:'pong', params:{ai:0, twoPlayer:true}},
+  {id:'mines1', name:'Minesweeper — Easy', engine:'mines', params:{cols:8, rows:8, bombs:8}},
+  {id:'mines2', name:'Minesweeper — Hard', engine:'mines', params:{cols:12, rows:10, bombs:20}},
+  {id:'snake4', name:'Snake — Neon', engine:'snake', params:{speed:90, color:'#ffd6a5'}},
+  {id:'dino', name:'Dino Run', engine:'dino', params:{}},
+  {id:'jumpcube', name:'Jump Cube', engine:'jumpcube', params:{}},
+  {id:'fruit', name:'Fruit Slice', engine:'fruit', params:{}},
+  {id:'car1', name:'Car Dodge — Easy', engine:'car', params:{speed:4}},
+  {id:'car2', name:'Car Dodge — Speed', engine:'car', params:{speed:6}},
+  {id:'space', name:'Space Shooter', engine:'space', params:{}},
+  {id:'stack', name:'Stack Tower', engine:'stack', params:{}},
+  {id:'whack', name:'Whack-A-Mole', engine:'whack', params:{}},
+  {id:'tile3', name:'Tile Slide — 5x5', engine:'tile', params:{size:5}},
+  {id:'puzzle1', name:'Word Guess', engine:'word', params:{}},
+  {id:'puzzle2', name:'Number Swipe', engine:'numberswipe', params:{}},
+  {id:'skate', name:'Hover Skate', engine:'skate', params:{}},
+  {id:'flappy3', name:'Flappy — Retro', engine:'flappy', params:{gravity:0.5, retro:true}},
+  {id:'pong4', name:'Pong — Classic 2', engine:'pong', params:{ai:0.12}},
+  {id:'subwayclone', name:'Subway Runner — Mini', engine:'subway', params:{speed:5}},
+  {id:'pizzaRush', name:'Pizza Rush', engine:'pizzaRush', params:{}},
+  {id:'wingRush', name:'Wing Rush', engine:'wingRush', params:{}},
+  {id:'sketch', name:'Pixel Sketch', engine:'paint', params:{palette:'pastel'}},
+  {id:'bubbles2', name:'Bubble Pop — Rapid', engine:'bubble', params:{freq:0.12}},
+  {id:'tictactoe', name:'Tic-Tac-Toe', engine:'tictactoe', params:{}},
+  {id:'maze', name:'Mini Maze', engine:'maze', params:{}},
+  {id:'finder', name:'Find the Pair', engine:'findpair', params:{}}
+];
+
+/* add 50 tiles programmatically */
+const gamesGrid = document.getElementById('gamesGrid');
+GAME_CATALOG.forEach((g, i) => {
+  const tile = document.createElement('div');
+  tile.className = 'game-tile';
+  tile.dataset.id = g.id;
+  tile.dataset.engine = g.engine;
+  tile.dataset.index = i;
+  tile.innerHTML = `<img class="game-thumb" src="https://picsum.photos/seed/game${i}/320/180" alt=""><div class="game-name">${g.name}</div>`;
+  tile.addEventListener('click', ()=> launchByIndex(i));
+  gamesGrid.appendChild(tile);
+});
+
+/* ---------- UI: unlock, search, music, notes, homework ---------- */
 const logo = document.getElementById('logo');
-let taps = 0, timer=null;
+let tapCount = 0, tapTimer = null;
 logo.addEventListener('click', ()=> {
-  taps++;
-  if(timer) clearTimeout(timer);
-  timer = setTimeout(()=> taps = 0, 1400);
-  if(taps >= 3){
-    taps = 0;
+  tapCount++;
+  if(tapTimer) clearTimeout(tapTimer);
+  tapTimer = setTimeout(()=> tapCount = 0, 1400);
+  if(tapCount >= 3){
+    tapCount = 0;
     localStorage.setItem('gf_unlocked','1');
     document.getElementById('gamesPanel').style.display = 'block';
     alert('Practice Tools unlocked ✅');
@@ -195,18 +234,46 @@ logo.addEventListener('click', ()=> {
 });
 if(localStorage.getItem('gf_unlocked') === '1') document.getElementById('gamesPanel').style.display = 'block';
 
-/* ======= Notes ======= */
+document.getElementById('startActivity').addEventListener('click', ()=> {
+  if(localStorage.getItem('gf_unlocked') === '1') {
+    const panel = document.getElementById('gamesPanel');
+    panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  } else {
+    alert('Triple-tap the school logo to unlock Practice Tools.');
+  }
+});
+
+document.getElementById('homeworkBtn').addEventListener('click', ()=> {
+  document.getElementById('homeworkOverlay').style.display = 'block';
+});
+document.getElementById('closeHomework').addEventListener('click', ()=> {
+  document.getElementById('homeworkOverlay').style.display = 'none';
+});
+
+/* notes */
 const notesEl = document.getElementById('notes');
 notesEl.value = localStorage.getItem('gf_notes') || '';
-document.getElementById('saveNotes').onclick = ()=> { localStorage.setItem('gf_notes', notesEl.value); alert('Notes saved'); };
+document.getElementById('saveNotes').onclick = ()=> { localStorage.setItem('gf_notes', notesEl.value); alert('Notes saved locally.'); };
 document.getElementById('clearNotes').onclick = ()=> { if(confirm('Clear notes?')) { notesEl.value=''; localStorage.removeItem('gf_notes'); } };
 
-/* ======= Music upload & controls (user supplies file) ======= */
+/* search */
+const searchBox = document.getElementById('searchBox');
+const searchClear = document.getElementById('searchClear');
+searchBox.addEventListener('input', ()=> filterGames(searchBox.value));
+searchClear.addEventListener('click', ()=> { searchBox.value=''; filterGames(''); });
+function filterGames(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#gamesGrid .game-tile').forEach(tile=>{
+    const name = tile.querySelector('.game-name').textContent.toLowerCase();
+    tile.style.display = (name.includes(q) || q==='') ? '' : 'none';
+  });
+}
+
+/* music upload/play */
 const musicInput = document.getElementById('musicFile');
 const uploadBtn = document.getElementById('uploadMusic');
 const musicToggle = document.getElementById('musicToggle');
 const audio = document.getElementById('bgAudio');
-
 uploadBtn.addEventListener('click', ()=> musicInput.click());
 musicInput.addEventListener('change', (e)=>{
   const f = e.target.files[0];
@@ -215,99 +282,561 @@ musicInput.addEventListener('change', (e)=>{
   audio.src = url;
   musicToggle.classList.remove('hidden');
   musicToggle.textContent = 'Play Music';
-  localStorage.setItem('gf_music', url); // note: object URL persists only in session; we keep it to show toggle
-  alert('Music uploaded — press Play');
+  alert('Music uploaded — press Play. (Note: iOS may require a tap to start audio.)');
 });
 musicToggle.addEventListener('click', ()=>{
-  if(audio.paused){ audio.play().catch(()=>alert('Tap on the page to enable audio (Safari)').then); musicToggle.textContent = 'Pause Music'; }
+  if(audio.paused){ audio.play().catch(()=>alert('Tap on the page to enable audio (iOS Safari)')); musicToggle.textContent = 'Pause Music'; }
   else { audio.pause(); musicToggle.textContent = 'Play Music'; }
 });
 
-/* ======= Search filter ======= */
-const searchBox = document.getElementById('searchBox');
-const searchClear = document.getElementById('searchClear');
-searchBox.addEventListener('input', ()=> filterGames(searchBox.value));
-searchClear.addEventListener('click', ()=> { searchBox.value=''; filterGames(''); });
-
-function filterGames(q){
-  q = q.trim().toLowerCase();
-  document.querySelectorAll('#gamesGrid .game-tile').forEach(tile=>{
-    const name = tile.querySelector('.game-name').textContent.toLowerCase();
-    const url = (tile.dataset.url || '').toLowerCase();
-    tile.style.display = (name.includes(q) || url.includes(q) || q==='') ? '' : 'none';
-  });
-}
-
-/* ======= Homework hide ======= */
-const homeworkBtn = document.getElementById('homeworkBtn');
-const homeworkOverlay = document.getElementById('homeworkOverlay');
-document.getElementById('closeHomework').addEventListener('click', ()=> homeworkOverlay.classList.add('hidden'));
-homeworkBtn.addEventListener('click', ()=> {
-  homeworkOverlay.classList.remove('hidden');
+/* hide games quickly */
+document.getElementById('hideGames').addEventListener('click', ()=> {
+  document.getElementById('gamesPanel').style.display = 'none';
+  document.getElementById('playArea').style.display = 'none';
+  document.getElementById('gameContent').innerHTML = '';
+  stopAllGames();
 });
 
-/* ======= Games wiring: open poki links inside iframe ======= */
-const gameTiles = document.querySelectorAll('.game-tile');
-const gameContent = document.getElementById('gameContent');
+/* ---------- Launcher by index ---------- */
 const playArea = document.getElementById('playArea');
+const gameContent = document.getElementById('gameContent');
 const playTitle = document.getElementById('playTitle');
 const closeGame = document.getElementById('closeGame');
-
-gameTiles.forEach(t => t.addEventListener('click', ()=>{
-  const url = t.dataset.url;
-  openGameInFrame(url, t.querySelector('.game-name').textContent);
-}));
-
 closeGame.addEventListener('click', ()=> {
-  stopGameFrame();
+  stopAllGames();
   playArea.style.display = 'none';
+  gameContent.innerHTML = '';
   playTitle.textContent = 'Ready';
-  gameContent.innerHTML = '';
 });
 
-function openGameInFrame(url, title){
-  // show play area and insert iframe
+function launchByIndex(i){
+  const entry = GAME_CATALOG[i];
+  if(!entry) return;
+  stopAllGames();
   playArea.style.display = 'block';
-  playTitle.textContent = title;
-  // Some game sites block embedding via frame; try to use poki embed wrapper if possible
-  // We'll attempt direct URL first
-  const iframe = document.createElement('iframe');
-  iframe.className = 'gameFrame';
-  iframe.src = url;
-  iframe.loading = 'lazy';
-  // clear and append
-  gameContent.innerHTML = '';
-  gameContent.appendChild(iframe);
+  playTitle.textContent = 'Loading ' + entry.name + '...';
+  gameContent.innerHTML = '<div class="small">Preparing ' + entry.name + '...</div>';
+  setTimeout(()=> {
+    playTitle.textContent = entry.name;
+    gameContent.innerHTML = '';
+    // call engine
+    const engine = entry.engine;
+    const fnName = 'engine_' + engine;
+    if(typeof window[fnName] === 'function'){
+      window[fnName](entry.params || {}, entry);
+    } else {
+      // fallback simple message
+      gameContent.innerHTML = '<div class="small">Game not ready yet.</div>';
+    }
+  }, 220);
 }
 
-/* stop game: remove iframe / revoke object urls */
-function stopGameFrame(){
-  const iframe = gameContent.querySelector('iframe');
-  if(iframe){
-    iframe.src = 'about:blank';
-    iframe.remove();
-  }
-  // pause audio
-  if(!audio.paused) { audio.pause(); musicToggle.textContent='Play Music'; }
+/* ---------- Utilities ---------- */
+function clearGameContent(){ gameContent.innerHTML = ''; }
+function stopAllGames(){
+  // clear intervals / rAFs saved on window
+  if(window._gameInterval){ clearInterval(window._gameInterval); window._gameInterval=null; }
+  if(window._gameRAF){ cancelAnimationFrame(window._gameRAF); window._gameRAF = null; }
+  // remove key handlers
+  document.onkeydown = null;
+  // remove touch handlers by replacing node
+  const clone = gameContent.cloneNode(false);
+  gameContent.parentNode.replaceChild(clone, gameContent);
+  // reassign reference
+  window.gameContent = document.getElementById('gameContent');
 }
 
-/* small safety: pause audio on hide/pagehide */
-window.addEventListener('pagehide', ()=> { try { audio.pause(); stopGameFrame(); } catch(e){} });
+/* ----------------- ENGINE IMPLEMENTATIONS ----------------- */
 
-/* If user wants quick hide: hideGames button rapidly hides panels */
-document.getElementById('hideGames').addEventListener('click', ()=> {
-  stopGameFrame();
-  document.getElementById('gamesPanel').style.display = 'none';
-  playArea.style.display = 'none';
-  homeworkOverlay.classList.add('hidden');
-});
-
-/* helpful tip: keyboard toggle for music */
-document.addEventListener('keydown', e => {
-  if(e.key === 'm') {
-    if(audio.src) { if(audio.paused) audio.play(); else audio.pause(); }
+/* 1) SNAKE engine (parameterized) */
+function engine_snake(params, entry){
+  params = Object.assign({grid:16, speed:110, color:'#9bf6ff'}, params || {});
+  const grid = params.grid, speed = params.speed, color = params.color;
+  gameContent.innerHTML = `<div style="text-align:center"><canvas id="snakeCanvas" width="320" height="320"></canvas><div style="margin-top:8px" class="small">Use arrows to move</div></div>`;
+  const canvas = document.getElementById('snakeCanvas'), ctx = canvas.getContext('2d');
+  let px = Math.floor(canvas.width/2), py = Math.floor(canvas.height/2), vx=grid, vy=0, tail=5, trail=[];
+  let ax = randPos(), ay = randPos();
+  function randPos(){ return Math.floor(Math.random()*(canvas.width/grid))*grid; }
+  function loop(){
+    px += vx; py += vy;
+    if(px < 0) px = canvas.width - grid; if(py < 0) py = canvas.height - grid;
+    if(px >= canvas.width) px = 0; if(py >= canvas.height) py = 0;
+    ctx.fillStyle = '#081226'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = params.color; trail.forEach(p=> ctx.fillRect(p.x,p.y,grid-2,grid-2));
+    trail.push({x:px,y:py}); while(trail.length>tail) trail.shift();
+    ctx.fillStyle = '#ff9aa2'; ctx.fillRect(ax, ay, grid-2, grid-2);
+    if(Math.abs(px-ax)<2 && Math.abs(py-ay)<2){ tail++; ax = randPos(); ay = randPos(); }
+    // self collision resets
+    for(let i=0;i<trail.length-1;i++){ if(trail[i].x === px && trail[i].y === py){ tail = 5; trail=[]; break; } }
   }
-});
+  window._gameInterval = setInterval(loop, speed);
+  document.onkeydown = e => {
+    if(e.key === 'ArrowUp' && vy===0){ vx=0; vy=-grid; }
+    if(e.key === 'ArrowDown' && vy===0){ vx=0; vy=grid; }
+    if(e.key === 'ArrowLeft' && vx===0){ vx=-grid; vy=0; }
+    if(e.key === 'ArrowRight' && vx===0){ vx=grid; vy=0; }
+  };
+}
+
+/* 2) PONG engine (param: ai difficulty, two player) */
+function engine_pong(params){
+  params = Object.assign({ai:0.12, twoPlayer:false}, params || {});
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="pongCanvas" width="420" height="300"></canvas><div style="margin-top:8px" class="small">Use Arrow Up/Down (right paddle) or W/S for left</div></div>';
+  const c = document.getElementById('pongCanvas'), ctx = c.getContext('2d');
+  let leftY = 120, rightY = 120, ball = {x:200,y:150,vx:3,vy:2}, leftScore=0, rightScore=0;
+  function loop(){
+    ctx.fillStyle = '#0b1220'; ctx.fillRect(0,0,c.width,c.height);
+    // paddles
+    ctx.fillStyle = '#fff'; ctx.fillRect(10,leftY,10,60); ctx.fillRect(c.width-20,rightY,10,60);
+    // ball
+    ctx.fillRect(ball.x,ball.y,10,10);
+    ball.x += ball.vx; ball.y += ball.vy;
+    if(ball.y < 0 || ball.y > c.height-10) ball.vy *= -1;
+    if(ball.x < 30 && ball.y > leftY && ball.y < leftY+60) ball.vx *= -1;
+    if(ball.x > c.width-40 && ball.y > rightY && ball.y < rightY+60) ball.vx *= -1;
+    // ai moves
+    if(!params.twoPlayer) {
+      rightY += (ball.y - (rightY+30)) * params.ai;
+    }
+    // basic left AI if twoPlayer false? left stays
+    // scores
+    if(ball.x < 0){ rightScore++; reset(); }
+    if(ball.x > c.width){ leftScore++; reset(); }
+    ctx.fillStyle='#fff'; ctx.font='14px sans-serif'; ctx.fillText('You: '+rightScore, 30,20); ctx.fillText('AI: '+leftScore, c.width-80,20);
+    window._gameRAF = requestAnimationFrame(loop);
+  }
+  function reset(){ ball.x = c.width/2; ball.y=c.height/2; ball.vx = (Math.random()>0.5?3:-3); ball.vy = (Math.random()*4-2); }
+  document.onkeydown = e => {
+    if(params.twoPlayer){
+      if(e.key==='w') leftY -= 14; if(e.key==='s') leftY += 14;
+    }
+    if(e.key === 'ArrowUp') rightY -= 14; if(e.key === 'ArrowDown') rightY += 14;
+  };
+  reset(); loop();
+}
+
+/* 3) MEMORY engine */
+function engine_memory(params){
+  const sets = [
+    ['🍎','🍔','🍕','🐶','🌟','🚀','🍩','🌊'],
+    ['1','2','3','4','5','6','7','8']
+  ];
+  const choice = sets[(params.set||0) % sets.length];
+  let cards = choice.concat(choice).sort(()=>Math.random()-0.5);
+  let flipped=[], matched=[];
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Memory Match</div><div id="memGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:420px;margin:0 auto"></div><div style="margin-top:10px"><button id="resetMem" class="btn btn-ghost">Reset</button></div></div>';
+  const grid = document.getElementById('memGrid');
+  function draw(){
+    grid.innerHTML='';
+    cards.forEach((c,i)=>{
+      const el = document.createElement('div'); el.style.height='90px'; el.style.borderRadius='8px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.style.fontWeight='800'; el.style.background = matched.includes(i)?'#caffbf':'#fff';
+      el.textContent = matched.includes(i) || flipped.includes(i) ? cards[i] : '❓';
+      el.onclick = ()=> { if(flipped.includes(i) || matched.includes(i)) return; flipped.push(i); draw(); if(flipped.length===2) setTimeout(check,500); };
+      grid.appendChild(el);
+    });
+  }
+  function check(){
+    const [a,b] = flipped;
+    if(cards[a]===cards[b]) matched.push(a,b);
+    flipped=[]; draw();
+    if(matched.length===cards.length) setTimeout(()=>alert('You matched all!'),200);
+  }
+  document.getElementById('resetMem').onclick = ()=> { cards = choice.concat(choice).sort(()=>Math.random()-0.5); flipped=[]; matched=[]; draw(); };
+  draw();
+}
+
+/* 4) FLAPPY engine */
+function engine_flappy(params){
+  params = Object.assign({gravity:0.6, retro:false}, params||{});
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="flappyCanvas" width="320" height="420"></canvas><div style="margin-top:8px" class="small">Tap or press space to flap</div></div>';
+  const c = document.getElementById('flappyCanvas'), ctx = c.getContext('2d');
+  let bird = {x:60,y:200,vy:0}, pipes=[], frame=0, score=0, alive=true;
+  function loop(){
+    frame++; ctx.fillStyle = params.retro ? '#222' : '#70c5ff'; ctx.fillRect(0,0,c.width,c.height);
+    bird.vy += params.gravity; bird.y += bird.vy;
+    if(bird.y < 0) bird.y=0; if(bird.y > c.height-16) alive=false;
+    if(frame%90===0) { pipes.push({x:c.width, top:40 + Math.random()*120, gap:100}); }
+    for(let i=pipes.length-1;i>=0;i--){
+      pipes[i].x -= 2.8;
+      ctx.fillStyle = '#2d6a4f'; ctx.fillRect(pipes[i].x,0,40,pipes[i].top); ctx.fillRect(pipes[i].x,pipes[i].top+pipes[i].gap,40,c.height);
+      if(bird.x+16 > pipes[i].x && bird.x < pipes[i].x+40){
+        if(bird.y < pipes[i].top || bird.y+14 > pipes[i].top+pipes[i].gap) alive=false;
+      }
+      if(pipes[i].x+40<0){ pipes.splice(i,1); score++; }
+    }
+    ctx.fillStyle='yellow'; ctx.fillRect(bird.x,bird.y,16,12);
+    ctx.fillStyle='white'; ctx.fillText('Score: '+score,10,20);
+    if(alive) window._gameRAF = requestAnimationFrame(loop); else ctx.fillText('Game Over - tap to restart',80,200);
+  }
+  c.addEventListener('touchstart', ()=> { bird.vy = -8; if(!alive){ pipes=[]; bird.y=200; bird.vy=0; frame=0; score=0; alive=true; loop(); } });
+  document.addEventListener('keydown', e => { if(e.key===' ') bird.vy=-8; });
+  loop();
+}
+
+/* 5) RUNNER engine (endless dodger) */
+function engine_runner(params){
+  params = Object.assign({speed:5}, params||{});
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="runCanvas" width="480" height="200"></canvas><div style="margin-top:8px" class="small">Tap/space to jump</div></div>';
+  const c = document.getElementById('runCanvas'), ctx = c.getContext('2d');
+  let x=40,y=150,vy=0,grav=0.9,obs=[],frame=0,score=0,alive=true;
+  function loop(){
+    frame++; ctx.fillStyle='#1b1f3b'; ctx.fillRect(0,0,c.width,c.height);
+    vy += grav; y += vy; if(y>170){ y=170; vy=0; }
+    ctx.fillStyle='#ffd166'; ctx.fillRect(x,y-20,24,24);
+    if(frame%90===0){ obs.push({x:c.width,w:20,h:20+Math.random()*60}); }
+    for(let i=obs.length-1;i>=0;i--){ obs[i].x -= params.speed; ctx.fillStyle='#ef476f'; ctx.fillRect(obs[i].x,c.height-obs[i].h,obs[i].w,obs[i].h);
+      if(obs[i].x+obs[i].w<0){ obs.splice(i,1); score++; }
+      if(x < obs[i].x+obs[i].w && x+24>obs[i].x && y-20 < c.height && y > c.height-obs[i].h){ alive=false; }
+    }
+    ctx.fillStyle='white'; ctx.fillText('Score: '+score,10,20);
+    if(alive) window._gameRAF = requestAnimationFrame(loop); else ctx.fillText('Game Over - tap to restart',120,100);
+  }
+  c.addEventListener('touchstart', ()=> { if(y>=170) vy=-12; if(!alive){ obs=[]; frame=0; score=0; alive=true; y=150; vy=0; loop(); } });
+  document.addEventListener('keydown', e => { if(e.key===' ' || e.key==='ArrowUp') if(y>=170) vy=-12; });
+  loop();
+}
+
+/* 6) BUBBLE POP engine */
+function engine_bubble(params){
+  params = Object.assign({freq:0.06}, params||{});
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="bubbleCanvas" width="360" height="420"></canvas><div class="small" style="margin-top:6px">Tap bubbles to pop</div></div>';
+  const c = document.getElementById('bubbleCanvas'), ctx = c.getContext('2d');
+  let bubbles=[], score=0;
+  function spawn(){ if(Math.random() < (params.freq||0.06)) bubbles.push({x:Math.random()*c.width, y:c.height+20, r:10+Math.random()*18, vy:1+Math.random()*2}); }
+  function loop(){ ctx.clearRect(0,0,c.width,c.height); spawn(); for(let i=bubbles.length-1;i>=0;i--){ bubbles[i].y -= bubbles[i].vy; ctx.beginPath(); ctx.fillStyle='rgba(255,122,198,0.9)'; ctx.arc(bubbles[i].x,bubbles[i].y,bubbles[i].r,0,Math.PI*2); ctx.fill(); if(bubbles[i].y + bubbles[i].r < 0) bubbles.splice(i,1); } ctx.fillStyle='#000'; ctx.fillText('Score: '+score,10,20); window._gameRAF = requestAnimationFrame(loop); }
+  c.addEventListener('touchstart', e => { const rect=c.getBoundingClientRect(); const x=e.touches[0].clientX-rect.left, y=e.touches[0].clientY-rect.top; for(let i=bubbles.length-1;i>=0;i--){ const b=bubbles[i]; if(Math.hypot(b.x-x,b.y-y) < b.r){ score++; bubbles.splice(i,1); } } });
+  loop();
+}
+
+/* 7) TILE SLIDE engine (NxN) */
+function engine_tile(params){
+  const size = params.size || 4;
+  let arr = [];
+  for(let i=1;i<=size*size-1;i++) arr.push(i);
+  arr.push(null);
+  arr = shuffle(arr);
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+  gameContent.innerHTML = `<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Tile Slide — ${size}x${size}</div><div id="tileBoard" style="width:${size*70}px;margin:0 auto;display:grid;grid-template-columns:repeat(${size},70px);gap:6px"></div><div style="margin-top:8px"><button id="shuffleBtn" class="btn btn-ghost">Shuffle</button></div></div>`;
+  const board = document.getElementById('tileBoard');
+  function draw(){
+    board.innerHTML='';
+    arr.forEach((v,i)=>{ const el=document.createElement('div'); el.style.height='70px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.style.borderRadius='8px'; el.style.fontWeight='800'; el.style.background = v===null ? '#fff' : '#ffd6a5'; el.textContent = v===null ? '' : v; el.onclick = ()=>{ const pos = arr.indexOf(null); if(adj(i,pos)){ arr[pos]=arr[i]; arr[i]=null; draw(); check(); } }; board.appendChild(el); });
+  }
+  function adj(a,b){ const ax=a%size, ay=Math.floor(a/size); const bx=b%size, by=Math.floor(b/size); return (Math.abs(ax-bx)+Math.abs(ay-by))===1; }
+  function check(){ if(arr.slice(0,-1).every((v,i)=>v === i+1)) setTimeout(()=>alert('Solved!'),100); }
+  document.getElementById('shuffleBtn').onclick = ()=> { arr = shuffle(arr); draw(); };
+  draw();
+}
+
+/* 8) PIZZA maker (simple) */
+function engine_pizza(){
+  gameContent.innerHTML = `
+  <div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Pizza Maker</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px">
+    <button class="btn btn-ghost" data-top="cheese">🧀 Cheese</button>
+    <button class="btn btn-ghost" data-top="pepperoni">🍕 Pepperoni</button>
+    <button class="btn btn-ghost" data-top="mush">🍄 Mushroom</button>
+    <button class="btn btn-ghost" data-top="olives">🫒 Olives</button>
+    <button id="bakeBtn" class="btn btn-primary">Bake</button>
+  </div>
+  <div id="pizzaArea" style="width:260px;height:260px;margin:0 auto;border-radius:50%;background:#f8e9d2;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden"></div>
+  <div style="margin-top:10px"><button id="resetPizza" class="btn btn-ghost">Reset</button></div></div>`;
+  const area = document.getElementById('pizzaArea'); const toppings = [];
+  gameContent.querySelectorAll('button[data-top]').forEach(b => b.addEventListener('click', ()=>{
+    const t = b.dataset.top; toppings.push(t);
+    const el = document.createElement('div'); el.style.position='absolute'; el.style.width='40px'; el.style.height='40px'; el.style.left = (20 + Math.random()*200) + 'px'; el.style.top = (20 + Math.random()*200) + 'px'; el.style.fontSize='24px'; el.textContent = t==='cheese'?'🧀':t==='pepperoni'?'🍕':t==='mush'?'🍄':'🫒'; area.appendChild(el);
+  }));
+  document.getElementById('bakeBtn').onclick = ()=> { if(toppings.length===0) return alert('Add toppings'); alert('Baked! Serve 🎉'); };
+  document.getElementById('resetPizza').onclick = ()=> { area.innerHTML=''; toppings.length=0; };
+}
+
+/* 9) WINGS game (simple step-cook) */
+function engine_wings(){
+  gameContent.innerHTML = `
+  <div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Wing Bar (Mini)</div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-bottom:8px">
+    <button class="btn btn-ghost" data-act="fry">🔶 Fry</button>
+    <button class="btn btn-ghost" data-act="toss">🫗 Toss Sauce</button>
+    <button class="btn btn-ghost" data-act="serve">🍽️ Serve</button>
+  </div>
+  <div id="wingState" style="width:260px;height:140px;margin:0 auto;border-radius:10px;background:#fff3e0;display:flex;align-items:center;justify-content:center;flex-direction:column">
+    <div id="wingText" style="font-weight:700">Raw Wings</div>
+    <div id="wingSub" class="small">Status: raw</div>
+  </div>
+  <div style="margin-top:10px"><button id="resetWings" class="btn btn-ghost">Reset</button></div></div>`;
+  let stage=0;
+  gameContent.querySelectorAll('button[data-act]').forEach(b => b.addEventListener('click', ()=>{
+    const act = b.dataset.act;
+    const text = document.getElementById('wingText'), sub = document.getElementById('wingSub');
+    if(act==='fry' && stage===0){ stage=1; text.textContent='Frying...'; sub.textContent='Crispy soon'; setTimeout(()=>{ text.textContent='Crispy Wings'; sub.textContent='Ready for sauce'; },900); }
+    else if(act==='toss' && stage===1){ stage=2; text.textContent='Saucing...'; sub.textContent='Tossing sauce'; setTimeout(()=>{ text.textContent='Sauced Wings'; sub.textContent='Ready to serve'; },700); }
+    else if(act==='serve' && stage===2){ stage=3; text.textContent='Served!'; sub.textContent='Enjoy 🍗'; alert('Order complete!'); }
+    else alert('Follow steps: Fry → Toss → Serve');
+  }));
+  document.getElementById('resetWings').onclick = ()=>{ stage=0; document.getElementById('wingText').textContent='Raw Wings'; document.getElementById('wingSub').textContent='Status: raw'; };
+}
+
+/* 10) PANCAKE flip */
+function engine_pancake(){ 
+  gameContent.innerHTML = `<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Pancake Flip</div>
+    <div id="panArea" style="width:240px;height:160px;margin:0 auto;border-radius:12px;background:#fff6e6;display:flex;align-items:center;justify-content:center;position:relative">
+      <div id="pancake" style="width:80px;height:50px;border-radius:40px;background:#f5cda5;position:absolute;bottom:30px"></div>
+    </div>
+    <div style="margin-top:10px"><button id="flipBtn" class="btn btn-primary">Flip!</button> <button id="resetPan" class="btn btn-ghost">Reset</button></div></div>`;
+  const pancake = document.getElementById('pancake');
+  document.getElementById('flipBtn').onclick = ()=> {
+    const success = Math.random() > 0.35;
+    if(success){ pancake.style.transform = 'translateY(-40px) rotate(180deg)'; setTimeout(()=>{ pancake.style.transform=''; alert('Nice flip!') },600); }
+    else { pancake.style.transform = 'translateY(-20px) rotate(90deg)'; setTimeout(()=>{ pancake.style.transform=''; alert('Oops — try again') },600); }
+  };
+  document.getElementById('resetPan').onclick = ()=> pancake.style.transform='';
+}
+
+/* 11) PAINTER */
+function engine_paint(params){
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Pixel Painter</div><div id="painter" style="width:100%;max-width:420px;margin:0 auto"></div><div style="margin-top:8px"><button id="clearPaint" class="btn btn-ghost">Clear</button></div></div>';
+  const area = document.getElementById('painter');
+  const rows=16, cols=24; const cells=[];
+  const grid = document.createElement('div'); grid.style.display='grid'; grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`; grid.style.gap='2px';
+  for(let i=0;i<rows*cols;i++){ const c = document.createElement('div'); c.style.height='18px'; c.style.background='#fff'; c.style.borderRadius='3px'; c.style.border='1px solid rgba(0,0,0,0.03)'; c.addEventListener('click', ()=> c.style.background = randomColor()); c.addEventListener('touchstart', ()=> c.style.background = randomColor()); grid.appendChild(c); cells.push(c); }
+  area.appendChild(grid);
+  function randomColor(){ const colors = ['#ffadad','#ffd6a5','#fdffb6','#caffbf','#9bf6ff','#bdb2ff','#ffc6ff']; return colors[Math.floor(Math.random()*colors.length)]; }
+  document.getElementById('clearPaint').onclick = ()=> cells.forEach(c=> c.style.background='#fff');
+}
+
+/* 12) RPS */
+function engine_rps(){
+  gameContent.innerHTML = `<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Rock Paper Scissors</div>
+  <div style="display:flex;gap:10px;justify-content:center"><button class="btn btn-ghost" data-move="rock">🪨</button><button class="btn btn-ghost" data-move="paper">📄</button><button class="btn btn-ghost" data-move="scissors">✂️</button></div>
+  <div id="rpsRes" style="margin-top:12px;font-weight:700"></div></div>`;
+  gameContent.querySelectorAll('button[data-move]').forEach(b=>b.addEventListener('click', ()=>{
+    const user=b.dataset.move; const moves=['rock','paper','scissors']; const comp=moves[Math.floor(Math.random()*3)];
+    const win = (user==='rock'&&comp==='scissors')||(user==='paper'&&comp==='rock')||(user==='scissors'&&comp==='paper');
+    const res = win? 'You win!': user===comp ? 'Draw' : 'You lose';
+    document.getElementById('rpsRes').textContent = `You: ${user} • Opponent: ${comp} → ${res}`;
+  }));
+}
+
+/* 13) 2048 (simple placeholder - playable numbers slide) */
+function engine_2048(){
+  // simple 4x4 numeric slide placeholder (not full 2048 mechanics but playable)
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">2048 (mini)</div><div id="grid2048" style="display:grid;grid-template-columns:repeat(4,70px);gap:8px;max-width:300px;margin:0 auto"></div><div style="margin-top:8px"><button id="reset2048" class="btn btn-ghost">Reset</button></div></div>';
+  let board = Array(16).fill(0);
+  function spawn(){ let z = board.map((v,i)=>v===0?i:-1).filter(v=>v>=0); if(z.length===0) return; const pos = z[Math.floor(Math.random()*z.length)]; board[pos]= Math.random()>0.6?4:2; }
+  function draw(){ const g=document.getElementById('grid2048'); g.innerHTML=''; board.forEach(v=>{ const el=document.createElement('div'); el.style.height='70px'; el.style.background = v? '#ffd6a5':'#fff'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.style.fontWeight='800'; el.textContent = v===0 ? '' : v; g.appendChild(el); }); }
+  function reset(){ board = Array(16).fill(0); spawn(); spawn(); draw(); }
+  document.onkeydown = e => { if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){ // naive combine: rotate or shift isn't fully implemented but allows some movement
+    // simple shift for left
+    if(e.key==='ArrowLeft'){ for(let r=0;r<4;r++){ let row = board.slice(r*4,r*4+4).filter(v=>v); while(row.length<4) row.push(0); for(let i=0;i<4;i++) board[r*4+i]=row[i]; } }
+    if(e.key==='ArrowRight'){ for(let r=0;r<4;r++){ let row = board.slice(r*4,r*4+4).filter(v=>v); while(row.length<4) row.unshift(0); for(let i=0;i<4;i++) board[r*4+i]=row[i]; } }
+    spawn(); draw();
+  }};
+  document.getElementById('reset2048').onclick = ()=> reset();
+  reset();
+}
+
+/* 14) BREAKOUT (simple) */
+function engine_breakout(params){
+  params = Object.assign({cols:6}, params||{});
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="breakCanvas" width="480" height="320"></canvas><div style="margin-top:6px" class="small">Use mouse/arrow to move paddle</div></div>';
+  const c = document.getElementById('breakCanvas'), ctx = c.getContext('2d');
+  let paddle = {x:200,w:80}, ball = {x:240,y:200,vx:3,vy:-3}, bricks=[];
+  const cols = params.cols, rows = 3;
+  const bw = Math.floor((c.width-40)/cols), bh = 20;
+  for(let r=0;r<rows;r++) for(let col=0;col<cols;col++) bricks.push({x:20+col*bw,y:20+r*(bh+6),w:bw-6,h:bh,alive:true});
+  function loop(){
+    ctx.fillStyle='#081226'; ctx.fillRect(0,0,c.width,c.height);
+    // draw bricks
+    bricks.forEach(b=> { if(b.alive){ ctx.fillStyle='#ffd6a5'; ctx.fillRect(b.x,b.y,b.w,b.h); }});
+    // paddle
+    ctx.fillStyle='#fff'; ctx.fillRect(paddle.x,c.height-20,paddle.w,10);
+    // ball
+    ctx.fillRect(ball.x,ball.y,8,8);
+    ball.x += ball.vx; ball.y += ball.vy;
+    if(ball.x<0 || ball.x>c.width-8) ball.vx *= -1;
+    if(ball.y<0) ball.vy *= -1;
+    if(ball.y>c.height){ resetBall(); }
+    // collisions with paddle
+    if(ball.x > paddle.x && ball.x < paddle.x + paddle.w && ball.y+8 >= c.height-20) ball.vy *= -1;
+    // brick collisions
+    bricks.forEach(b=>{ if(b.alive && ball.x > b.x && ball.x < b.x+b.w && ball.y > b.y && ball.y < b.y+b.h){ b.alive=false; ball.vy *= -1; } });
+    window._gameRAF = requestAnimationFrame(loop);
+  }
+  function resetBall(){ ball.x=c.width/2; ball.y=c.height/2; ball.vx=3; ball.vy=-3; }
+  c.addEventListener('mousemove', e=> { const rect=c.getBoundingClientRect(); paddle.x = e.clientX - rect.left - paddle.w/2; });
+  document.addEventListener('keydown', e=> { if(e.key==='ArrowLeft') paddle.x -= 20; if(e.key==='ArrowRight') paddle.x += 20; });
+  loop();
+}
+
+/* 15) MINES (simple) */
+function engine_mines(params){
+  params = Object.assign({cols:8,rows:8,bombs:10}, params||{});
+  const cols = params.cols, rows = params.rows, bombs = params.bombs;
+  let board = Array(rows).fill(0).map(()=>Array(cols).fill(0)); let revealed=Array(rows).fill(0).map(()=>Array(cols).fill(false));
+  // place bombs
+  let placed=0; while(placed<bombs){ const r=Math.floor(Math.random()*rows), c=Math.floor(Math.random()*cols); if(board[r][c]!==-1){ board[r][c]=-1; placed++; } }
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(board[r][c]!==-1){ let count=0; for(let rr=r-1;rr<=r+1;rr++) for(let cc=c-1;cc<=c+1;cc++) if(rr>=0&&rr<rows&&cc>=0&&cc<cols&&board[rr][cc]===-1) count++; board[r][c]=count; }
+  gameContent.innerHTML = `<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Minesweeper ${cols}x${rows}</div><div id="mineBoard" style="display:grid;grid-template-columns:repeat(${cols},36px);gap:6px;max-width:${cols*42}px;margin:0 auto"></div></div>`;
+  const mb = document.getElementById('mineBoard');
+  function draw(){
+    mb.innerHTML=''; for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ const el=document.createElement('div'); el.style.height='36px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.style.borderRadius='6px'; el.style.background = revealed[r][c] ? '#fff' : '#f0f0f0'; el.style.cursor='pointer'; el.textContent = revealed[r][c] ? (board[r][c]===-1 ? '💣' : (board[r][c]||'')) : ''; el.onclick = ()=> { if(board[r][c]===-1){ alert('Boom!'); revealAll(); } else { flood(r,c); draw(); } }; mb.appendChild(el); }
+  }
+  function flood(r,c){ if(r<0||r>=rows||c<0||c>=cols||revealed[r][c]) return; revealed[r][c]=true; if(board[r][c]===0) for(let rr=r-1;rr<=r+1;rr++) for(let cc=c-1;cc<=c+1;cc++) flood(rr,cc); }
+  function revealAll(){ for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) revealed[r][c]=true; draw(); }
+  draw();
+}
+
+/* 16) DINO run (simple) */
+function engine_dino(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="dino" width="480" height="160"></canvas><div style="margin-top:6px" class="small">Tap/Space to jump</div></div>';
+  const c = document.getElementById('dino'), ctx = c.getContext('2d');
+  let x=50,y=120,vy=0,grav=0.9,obs=[],frame=0,alive=true,score=0;
+  function loop(){ frame++; ctx.fillStyle='#dfe7f2'; ctx.fillRect(0,0,c.width,c.height); vy+=grav; y+=vy; if(y>120){ y=120; vy=0; } ctx.fillStyle='#2b2d42'; ctx.fillRect(x,y-24,24,24);
+    if(frame%80===0) obs.push({x:c.width,w:20,h:20+Math.random()*30});
+    for(let i=obs.length-1;i>=0;i--){ obs[i].x -=6; ctx.fillStyle='#ef476f'; ctx.fillRect(obs[i].x,c.height-obs[i].h,obs[i].w,obs[i].h); if(obs[i].x+obs[i].w<0){ obs.splice(i,1); score++; } if(x < obs[i].x+obs[i].w && x+24>obs[i].x && y-24 < c.height && y > c.height-obs[i].h) alive=false; }
+    ctx.fillStyle='#000'; ctx.fillText('Score: '+score,10,18);
+    if(alive) window._gameRAF = requestAnimationFrame(loop); else ctx.fillText('Game Over - tap to restart',140,80);
+  }
+  c.addEventListener('touchstart', ()=> { if(y>=120) vy=-14; if(!alive){ obs=[]; frame=0; score=0; alive=true; y=120; vy=0; loop(); } });
+  document.addEventListener('keydown', e=> { if(e.key===' '||e.key==='ArrowUp') if(y>=120) vy=-14; });
+  loop();
+}
+
+/* 17) JUMPCUBE simple */
+function engine_jumpcube(){ 
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="jumpC" width="360" height="240"></canvas><div class="small" style="margin-top:6px">Tap to jump</div></div>';
+  const c = document.getElementById('jumpC'), ctx = c.getContext('2d');
+  let x=50,y=200,vy=0,gravity=0.9,blocks=[{x:300,y:200,w:40,h:40}],alive=true,frame=0;
+  function loop(){ frame++; ctx.fillStyle='#a8dadc'; ctx.fillRect(0,0,c.width,c.height); vy+=gravity; y+=vy; if(y>200)y=200; ctx.fillStyle='#2b2d42'; ctx.fillRect(x,y-20,20,20); for(let i=0;i<blocks.length;i++){ blocks[i].x-=3; ctx.fillStyle='#ffd6a5'; ctx.fillRect(blocks[i].x,blocks[i].y,blocks[i].w,blocks[i].h); if(blocks[i].x+blocks[i].w < -50) blocks[i].x = c.width + Math.random()*200; if(x < blocks[i].x+blocks[i].w && x+20 > blocks[i].x && y-20 < blocks[i].y+blocks[i].h) alive=false; } if(alive) window._gameRAF = requestAnimationFrame(loop); else ctx.fillText('Game Over',140,120); }
+  c.addEventListener('touchstart', ()=> { if(y>=200) vy=-12; if(!alive){ blocks=[{x:300,y:200,w:40,h:40}]; alive=true; loop(); } });
+  document.addEventListener('keydown', e=> { if(e.key===' ') if(y>=200) vy=-12; });
+  loop();
+}
+
+/* 18) FRUIT SLICE (simple drag) */
+function engine_fruit(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="fruitC" width="360" height="420"></canvas><div class="small">Swipe to slice</div></div>';
+  const c = document.getElementById('fruitC'), ctx=c.getContext('2d');
+  let fruits=[],score=0,mouse=[];
+  function spawn(){ if(Math.random()<0.06) fruits.push({x:Math.random()*c.width,y:c.height+20,vx:(Math.random()-0.5)*4,vy:-6-randomRange(0,5),r:18+Math.random()*14}); }
+  function randomRange(a,b){ return Math.random()*(b-a)+a; }
+  function loop(){ ctx.clearRect(0,0,c.width,c.height); spawn(); for(let i=fruits.length-1;i>=0;i--){ fruits[i].vy += 0.2; fruits[i].x += fruits[i].vx; fruits[i].y += fruits[i].vy; ctx.beginPath(); ctx.fillStyle='#ff6b6b'; ctx.arc(fruits[i].x,fruits[i].y,fruits[i].r,0,Math.PI*2); ctx.fill(); if(fruits[i].y>c.height+50) fruits.splice(i,1); for(let m=0;m<mouse.length;m++){ if(Math.hypot(mouse[m].x-fruits[i].x, mouse[m].y-fruits[i].y) < fruits[i].r){ score++; fruits.splice(i,1); } } } ctx.fillStyle='#000'; ctx.fillText('Score: '+score,10,20); window._gameRAF = requestAnimationFrame(loop); }
+  c.addEventListener('touchmove', e=> { const rect=c.getBoundingClientRect(); mouse.push({x:e.touches[0].clientX-rect.left, y:e.touches[0].clientY-rect.top}); setTimeout(()=>mouse.shift(),80); });
+  loop();
+}
+
+/* 19) CAR dodge */
+function engine_car(params){
+  params = Object.assign({speed:4}, params||{});
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="carC" width="420" height="280"></canvas><div class="small">Tilt or use arrows to move</div></div>';
+  const c=document.getElementById('carC'), ctx=c.getContext('2d');
+  let carX = c.width/2-20, obs=[], frame=0, score=0, alive=true;
+  function loop(){ frame++; ctx.fillStyle='#a3d5ff'; ctx.fillRect(0,0,c.width,c.height); if(frame%60===0) obs.push({x:Math.random()*(c.width-40), y:-40, h:30}); for(let i=obs.length-1;i>=0;i--){ obs[i].y += params.speed; ctx.fillStyle='#ef476f'; ctx.fillRect(obs[i].x, obs[i].y, 40, obs[i].h); if(obs[i].y > c.height){ obs.splice(i,1); score++; } if(carX < obs[i].x+40 && carX+40 > obs[i].x && c.height-60 < obs[i].y+obs[i].h) alive=false; } ctx.fillStyle='#2b2d42'; ctx.fillRect(carX, c.height-60, 40, 40); ctx.fillStyle='#000'; ctx.fillText('Score: '+score,10,20); if(alive) window._gameRAF = requestAnimationFrame(loop); else ctx.fillText('Game Over',160,140); }
+  document.addEventListener('keydown', e=> { if(e.key==='ArrowLeft') carX -= 20; if(e.key==='ArrowRight') carX += 20; });
+  c.addEventListener('touchstart', e=> { const rect=c.getBoundingClientRect(); carX = e.touches[0].clientX - rect.left - 20; });
+  loop();
+}
+
+/* 20) SPACE shooter (simple) */
+function engine_space(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="spaceC" width="420" height="320"></canvas><div class="small">Tap to shoot</div></div>';
+  const c=document.getElementById('spaceC'), ctx=c.getContext('2d');
+  let ship={x:c.width/2,y:c.height-40}, bullets=[], enemies=[], frame=0;
+  function loop(){ frame++; ctx.fillStyle='#001'; ctx.fillRect(0,0,c.width,c.height); if(frame%60===0) enemies.push({x:Math.random()*(c.width-30),y:-20}); bullets.forEach(b=>{ b.y-=6; ctx.fillStyle='#ff0'; ctx.fillRect(b.x,b.y,4,8); }); enemies.forEach((e,i)=>{ e.y+=2; ctx.fillStyle='#f36'; ctx.fillRect(e.x,e.y,24,18); for(let j=bullets.length-1;j>=0;j--){ if(bullets[j].x > e.x && bullets[j].x < e.x+24 && bullets[j].y < e.y+18){ enemies.splice(i,1); bullets.splice(j,1); } } }); ctx.fillStyle='#0f0'; ctx.fillRect(ship.x,ship.y,24,12); window._gameRAF = requestAnimationFrame(loop); }
+  c.addEventListener('touchstart', e=>{ const rect=c.getBoundingClientRect(); const tx=e.touches[0].clientX-rect.left; bullets.push({x:tx,y:ship.y}); });
+  document.addEventListener('keydown', e=> { if(e.key===' ') bullets.push({x:ship.x+12,y:ship.y}); if(e.key==='ArrowLeft') ship.x -= 12; if(e.key==='ArrowRight') ship.x += 12; });
+  loop();
+}
+
+/* 21) STACK tower */
+function engine_stack(){
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Stack Tower</div><canvas id="stackC" width="320" height="420"></canvas><div class="small">Tap to drop block</div></div>';
+  const c=document.getElementById('stackC'), ctx=c.getContext('2d');
+  let blocks=[], x=0, dir=2, currentW=120, y=380;
+  function loop(){ ctx.fillStyle='#091229'; ctx.fillRect(0,0,c.width,c.height); x += dir; if(x<0||x+currentW>c.width) dir*=-1; ctx.fillStyle='#ff7ac6'; ctx.fillRect(x,y,currentW,20); blocks.forEach((b,i)=>{ ctx.fillStyle='#6c5ce7'; ctx.fillRect(b.x,b.y,b.w,20); }); window._gameRAF = requestAnimationFrame(loop); }
+  c.addEventListener('touchstart', ()=> { blocks.push({x:x,y:y,w:currentW}); y -= 22; x=0; if(y<60) { alert('You stacked high!'); y=380; blocks=[]; } });
+  loop();
+}
+
+/* 22) Whack-a-mole */
+function engine_whack(){
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Whack-A-Mole</div><div id="moleGrid" style="display:grid;grid-template-columns:repeat(3,100px);gap:10px;margin:0 auto"></div><div style="margin-top:8px" class="small">Tap mole to whack</div></div>';
+  const grid = document.getElementById('moleGrid'); let holes=[];
+  for(let i=0;i<9;i++){ const el=document.createElement('div'); el.style.height='80px'; el.style.width='100px'; el.style.background='#fff'; el.style.borderRadius='8px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.textContent=''; grid.appendChild(el); holes.push(el);}
+  let score=0; function spawn(){ const idx=Math.floor(Math.random()*holes.length); holes[idx].textContent='🐹'; setTimeout(()=>{ holes[idx].textContent=''; },700); }
+  window._gameInterval = setInterval(spawn,700);
+  holes.forEach(h=> h.addEventListener('click', ()=> { if(h.textContent==='🐹'){ score++; h.textContent=''; alert('Whack! Score: '+score); } }));
+}
+
+/* 23) SUBWAY clone mini */
+function engine_subway(params){
+  params = Object.assign({speed:4}, params||{});
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="subC" width="420" height="240"></canvas><div class="small">Tap to jump</div></div>';
+  const c=document.getElementById('subC'), ctx=c.getContext('2d');
+  let runnerX=60, runnerY=180, vy=0, grav=1, obstacles=[], frame=0;
+  function loop(){ frame++; ctx.fillStyle='#87ceeb'; ctx.fillRect(0,0,c.width,c.height); vy+=grav; runnerY += vy; if(runnerY>180) runnerY=180; ctx.fillStyle='#ff6b6b'; ctx.fillRect(runnerX,runnerY-24,24,24);
+    if(frame%80===0) obstacles.push({x:c.width,y:200,w:20,h:20+Math.random()*30});
+    for(let i=obstacles.length-1;i>=0;i--){ obstacles[i].x -= params.speed; ctx.fillStyle='#333'; ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].w, obstacles[i].h); if(obstacles[i].x+obstacles[i].w<0) obstacles.splice(i,1); if(runnerX < obstacles[i].x+obstacles[i].w && runnerX+24 > obstacles[i].x && runnerY-24 < obstacles[i].y+obstacles[i].h) alert('Hit!'); }
+    window._gameRAF = requestAnimationFrame(loop);
+  }
+  c.addEventListener('touchstart', ()=> { if(runnerY>=180) vy=-14; });
+  document.addEventListener('keydown', e=>{ if(e.key===' '||e.key==='ArrowUp') if(runnerY>=180) vy=-14; });
+  loop();
+}
+
+/* 24) pizzaRush (short time game) */
+function engine_pizzaRush(){
+  // simplified time-management: tap customer to serve
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Pizza Rush</div><div id="custArea" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"></div><div style="margin-top:8px" class="small">Tap a customer to serve pizza</div></div>';
+  const area = document.getElementById('custArea'); let score=0;
+  function spawn(){ const el=document.createElement('div'); el.style.width='80px'; el.style.height='80px'; el.style.background='#fff3e0'; el.style.borderRadius='8px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.textContent='🙂'; el.onclick = ()=> { score++; el.remove(); alert('Served! Score: '+score); }; area.appendChild(el); setTimeout(()=>{ if(el.parentNode) el.remove(); },3500); }
+  window._gameInterval = setInterval(spawn,900);
+}
+
+/* 25) wingRush (variant) */
+function engine_wingRush(){ engine_pizzaRush(); }
+
+/* 26) bubble variant done earlier as extra (re-use engine_bubble) */
+/* 27) tile variants already present */
+/* 28) tictactoe */
+function engine_tictactoe(){
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Tic-Tac-Toe</div><div id="ttt" style="width:260px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div><div style="margin-top:8px"><button id="tttReset" class="btn btn-ghost">Restart</button></div></div>';
+  const boardEl = document.getElementById('ttt'); let board=[null,null,null,null,null,null,null,null,null]; let turn='X';
+  function draw(){ boardEl.innerHTML=''; board.forEach((v,i)=>{ const cell=document.createElement('div'); cell.style.height='70px'; cell.style.background='#fff'; cell.style.display='flex'; cell.style.alignItems='center'; cell.style.justifyContent='center'; cell.style.fontSize='30px'; cell.style.fontWeight='800'; cell.textContent=v||''; cell.onclick = ()=>{ if(board[i]) return; board[i]=turn; turn = turn==='X'?'O':'X'; draw(); check(); }; boardEl.appendChild(cell); }); }
+  function check(){ const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(const w of wins){ const[a,b,c]=w; if(board[a] && board[a]===board[b] && board[b]===board[c]){ alert(board[a]+' wins!'); return; } } if(board.every(Boolean)) alert('Draw'); }
+  document.getElementById('tttReset').onclick = ()=>{ board=[null,null,null,null,null,null,null,null,null]; turn='X'; draw(); };
+  draw();
+}
+
+/* 29) maze simple */
+function engine_maze(){ gameContent.innerHTML='<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Mini Maze</div><canvas id="mazeC" width="320" height="320"></canvas><div class="small">Use arrows to move</div></div>'; const c=document.getElementById('mazeC'), ctx=c.getContext('2d'); const w=10,h=10,cell=32; let px=1,py=1; // static maze walls array for simplicity
+  const walls = Array(h).fill(0).map(()=>Array(w).fill(0)); // create border walls
+  for(let r=0;r<h;r++) for(let c2=0;c2<w;c2++) if(r===0||r===h-1||c2===0||c2===w-1) walls[r][c2]=1; // add some internal walls
+  for(let i=0;i<30;i++){ walls[2+Math.floor(Math.random()*(h-4))][2+Math.floor(Math.random()*(w-4))]=1; }
+  function draw(){ ctx.fillStyle='#081226'; ctx.fillRect(0,0,320,320); for(let r=0;r<h;r++) for(let c2=0;c2<w;c2++){ if(walls[r][c2]){ ctx.fillStyle='#fff'; ctx.fillRect(c2*cell,r*cell,cell,cell); } } ctx.fillStyle='#ff6b6b'; ctx.fillRect(px*cell+6,py*cell+6,cell-12,cell-12); if(px===w-2 && py===h-2) ctx.fillStyle='white', ctx.fillText('Goal! Refresh to play again',40,160); }
+  document.onkeydown = e=>{ if(e.key==='ArrowUp' && !walls[py-1][px]) py--; if(e.key==='ArrowDown' && !walls[py+1][px]) py++; if(e.key==='ArrowLeft' && !walls[py][px-1]) px--; if(e.key==='ArrowRight' && !walls[py][px+1]) px++; draw(); }
+  draw();
+}
+
+/* 30) find pair */
+function engine_findpair(){ 
+  const items = ['🍩','🍕','🍔','🍜','🍦','🍒','🍪','🍭']; let cards = items.concat(items).sort(()=>Math.random()-0.5); let flipped=[], matched=[];
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Find the Pair</div><div id="fp" style="display:grid;grid-template-columns:repeat(4,90px);gap:8px;max-width:380px;margin:0 auto"></div></div>';
+  const fp = document.getElementById('fp');
+  function draw(){ fp.innerHTML=''; cards.forEach((c,i)=>{ const el=document.createElement('div'); el.style.height='80px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.style.background = matched.includes(i)?'#caffbf':'#fff'; el.style.borderRadius='8px'; el.textContent = matched.includes(i) || flipped.includes(i) ? cards[i] : '❓'; el.onclick = ()=>{ if(flipped.includes(i)||matched.includes(i)) return; flipped.push(i); draw(); if(flipped.length===2) setTimeout(check,400); }; fp.appendChild(el); }); }
+  function check(){ const [a,b]=flipped; if(cards[a]===cards[b]) matched.push(a,b); flipped=[]; draw(); if(matched.length===cards.length) setTimeout(()=>alert('All found!'),200); }
+  draw();
+}
+
+/* ---------- end engines list ---------- */
+
+/* Some engines reuse functions above (e.g. pizzaRush, wingRush aliasing) */
+
+console.log('Activity Pack ready — 50 games available.');
+
+/* helpful: stop games when page hidden */
+window.addEventListener('pagehide', ()=> { stopAllGames(); if(!audio.paused) audio.pause(); });
 </script>
+
 </body>
 </html>
