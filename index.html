@@ -3,457 +3,547 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>School Portal — Classroom Resources</title>
-
-<!-- ====== STYLES (school look + disguised) ====== -->
+<title>Greenfield School Portal</title>
+<meta name="theme-color" content="#FF7AC6">
 <style>
+  /* ---------- Cute + Cool School Theme (pastel + neon) ---------- */
   :root{
-    --bg1: #f6f8fb;
-    --panel:#ffffff;
-    --accent:#1d4ed8;
-    --muted:#4b5563;
-    --card-shadow: 0 6px 20px rgba(16,24,40,0.06);
+    --bg1: #fbfbff;
+    --accent: #6c5ce7;     /* neon purple */
+    --accent2:#ff7ac6;     /* neon pink */
+    --card:#ffffff;
+    --muted:#6b7280;
+    --glass: rgba(255,255,255,0.7);
   }
   *{box-sizing:border-box;font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
-  html,body{height:100%}
-  body{
-    margin:0;
-    background: linear-gradient(180deg,#f5f8ff 0%, #eef2fb 100%);
-    color:#0b1220;
-  }
-
-  /* Header (school-like) */
-  header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:14px 18px;
-    background:var(--panel);
-    box-shadow:var(--card-shadow);
-    position:sticky;
-    top:0;
-    z-index:10;
-  }
-  .left {
-    display:flex; align-items:center; gap:12px;
-  }
-  .logo {
-    width:52px;height:52px;border-radius:10px;
-    background:linear-gradient(135deg,#fff,#eef6ff);
-    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);
-    box-shadow:0 2px 8px rgba(29,78,216,0.12);
-    font-size:18px;
-  }
-  .school-title{font-weight:700;font-size:16px}
+  html,body{height:100%;margin:0;background:
+    radial-gradient(1200px 400px at -10% 20%, rgba(108,92,231,0.08), transparent 10%),
+    radial-gradient(1000px 300px at 110% 80%, rgba(255,122,198,0.06), transparent 12%),
+    var(--bg1);
+  color:#0b1220}
+  header{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:linear-gradient(180deg,var(--card),#f6f7ff);box-shadow:0 6px 18px rgba(11,17,32,0.06);position:sticky;top:0;z-index:40}
+  .left{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px;box-shadow:0 8px 20px rgba(108,92,231,0.18);cursor:pointer;user-select:none}
+  .school-title{font-weight:800;font-size:18px}
   .school-sub{font-size:12px;color:var(--muted)}
-
-  .right {
-    display:flex; gap:10px; align-items:center;
-  }
-  .teacher {
-    text-align:right;
-  }
-  .teacher .tname {font-weight:700;}
-  .tools-btn {padding:8px 12px;border-radius:10px;border:1px solid rgba(11,17,32,0.06); background:transparent; cursor:pointer; font-weight:600;}
-  .start-btn {background:var(--accent); color:white; padding:9px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; box-shadow:0 6px 18px rgba(29,78,216,0.12);}
-
-  /* main container */
-  main{max-width:980px;margin:18px auto;padding:14px}
-  .card{background:var(--panel);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:var(--card-shadow)}
-  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .right{display:flex;align-items:center;gap:10px}
+  .teacher{font-size:13px;color:var(--muted);text-align:right}
+  .btn{padding:9px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+  .btn-primary{background:var(--accent);color:white;box-shadow:0 8px 18px rgba(108,92,231,0.12)}
+  .btn-ghost{background:transparent;border:1px solid rgba(11,17,32,0.06);color:var(--muted)}
+  main{max-width:1000px;margin:18px auto;padding:12px}
+  .card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:14px;box-shadow:0 6px 18px rgba(11,17,32,0.04)}
   .muted{color:var(--muted);font-size:13px}
-
-  /* games grid disguised */
-  #gameArea{display:none;margin-top:12px}
-  .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-  .game-tile{background:linear-gradient(180deg,#fff,#f7fbff);padding:8px;border-radius:12px;cursor:pointer;border:1px solid rgba(11,17,32,0.04);text-align:center;transition:transform .15s}
-  .game-tile:hover{transform:translateY(-4px)}
-  .game-tile img{width:100%;height:92px;object-fit:cover;border-radius:8px}
-  .game-name{margin-top:8px;font-weight:700;font-size:14px}
-
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  /* Games area (hidden until unlocked) */
+  #gamesPanel{display:none;margin-top:12px}
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+  .game-tile{background:linear-gradient(180deg,#fff,#fbfbff);border-radius:12px;padding:8px;text-align:center;border:1px solid rgba(11,17,32,0.04);cursor:pointer;transition:transform .12s}
+  .game-tile:hover{transform:translateY(-6px)}
+  .game-thumb{width:100%;height:86px;object-fit:cover;border-radius:8px}
+  .game-name{font-weight:800;margin-top:8px;color:#0b1220}
   /* play area */
-  #playArea{display:none;margin-top:14px;background:linear-gradient(180deg,#fff,#fbfdff);padding:12px;border-radius:12px;min-height:320px;border:1px solid rgba(11,17,32,0.04)}
-  .play-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
-  .small {font-size:13px;color:var(--muted)}
-
-  /* footer */
+  #playArea{display:none;margin-top:12px;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#f7fbff);min-height:320px;border:1px solid rgba(11,17,32,0.04)}
+  .play-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .small{font-size:13px;color:var(--muted)}
+  /* responsive */
+  @media(max-width:520px){ .logo{width:48px;height:48px;font-size:16px} .game-thumb{height:76px} }
+  /* game canvas / UI */
+  canvas{display:block;margin:8px auto;border-radius:8px;max-width:100%}
+  button.small{padding:8px 10px;border-radius:8px;border:0;cursor:pointer}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  textarea{width:100%;min-height:90px;border-radius:8px;padding:8px;border:1px solid rgba(11,17,32,0.06)}
   footer{text-align:center;color:var(--muted);font-size:12px;margin:18px 0}
-
-  /* responsive tweaks */
-  @media (max-width:520px){
-    .logo{width:44px;height:44px;font-size:16px}
-    .game-tile img{height:82px}
-  }
-
-  /* canvas/game sizing */
-  canvas{display:block;margin:10px auto;border-radius:8px;background:#081226}
-  .ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:270px;margin:10px auto}
-  .ttt-cell{height:78px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;cursor:pointer}
-  .mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:420px;margin:10px auto}
-  .mem-card{height:90px;border-radius:8px;background:linear-gradient(180deg,#fff,#f5f9ff);display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer}
-
-  .mini {font-size:12px;color:#6b7280}
+  /* cute icons */
+  .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent2),var(--accent));color:white;font-weight:800;font-size:12px}
 </style>
 </head>
 <body>
-
-<!-- HEADER: looks like school portal -->
 <header>
   <div class="left">
-    <div class="logo">SCH</div>
+    <div id="logo" class="logo" title="School logo">SCH</div>
     <div>
-      <div class="school-title">Greenfield High — Resources</div>
-      <div class="school-sub">Student Portal • Grade 10</div>
+      <div class="school-title">Greenfield High — Student Portal</div>
+      <div class="school-sub">Classroom Resources • Grade 10</div>
     </div>
   </div>
 
   <div class="right">
     <div class="teacher">
-      <div class="tname">Ms. Park</div>
-      <div class="mini">Classroom Lead</div>
+      <div style="font-weight:800">Ms. Park</div>
+      <div class="small">Classroom Lead</div>
     </div>
-    <button id="helpBtn" class="tools-btn">Help</button>
-    <button id="startBtn" class="start-btn">Start Activity</button>
+    <button id="notesBtn" class="btn btn-ghost">Notes</button>
+    <button id="startActivity" class="btn btn-primary">Start Activity</button>
   </div>
 </header>
 
 <main>
-  <!-- top card -->
   <section class="card">
     <div style="display:flex;justify-content:space-between;align-items:center">
       <div>
-        <div style="font-weight:800">Practice Tools</div>
-        <div class="muted">Quick activities & practice games — suitable for short breaks</div>
+        <div style="font-weight:900">Practice Tools</div>
+        <div class="muted">Quick activities for learning breaks. Triple-tap the logo to unlock hidden practice tools.</div>
       </div>
-      <div>
-        <button id="openTools" class="tools-btn">Open Tools</button>
+      <div style="text-align:right">
+        <div class="badge">v1.0</div>
       </div>
     </div>
 
-    <!-- hidden games panel -->
-    <div id="gameArea" class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-weight:700">Activity Pack — Games</div>
-        <div class="muted">Tap a game to launch (plays inside page)</div>
+    <!-- Hidden games panel -->
+    <div id="gamesPanel" class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">Activity Pack — Games</div>
+        <div class="muted">Tap a tile to open the game inside the page</div>
       </div>
 
-      <div class="games-grid" id="gamesGrid">
-        <!-- game tiles (many) - tiles will be wired to load functions -->
-        <!-- We'll include many tiles; implementations come in script -->
-        <div class="game-tile" data-game="snake">
-          <img src="https://i.imgur.com/2r7QfJp.jpeg" alt="Snake">
-          <div class="game-name">Snake</div>
-        </div>
+      <div id="gamesGrid" class="games-grid" style="margin-top:12px">
+        <!-- tiles: thumbnails are safe, all games built-in -->
+        <div class="game-tile" data-game="snake"><img class="game-thumb" src="https://i.imgur.com/2r7QfJp.jpeg"><div class="game-name">Snake</div></div>
+        <div class="game-tile" data-game="pong"><img class="game-thumb" src="https://i.imgur.com/8hYb6sD.jpeg"><div class="game-name">Pong</div></div>
+        <div class="game-tile" data-game="memory"><img class="game-thumb" src="https://i.imgur.com/dfzX6Zy.jpeg"><div class="game-name">Memory Match</div></div>
+        <div class="game-tile" data-game="flappy"><img class="game-thumb" src="https://i.imgur.com/7XcGf0K.jpeg"><div class="game-name">Flappy</div></div>
+        <div class="game-tile" data-game="runner"><img class="game-thumb" src="https://i.imgur.com/0fQ2K4v.jpeg"><div class="game-name">City Runner</div></div>
+        <div class="game-tile" data-game="bubble"><img class="game-thumb" src="https://i.imgur.com/Lg2w5Qm.jpeg"><div class="game-name">Bubble Pop</div></div>
+        <div class="game-tile" data-game="tile"><img class="game-thumb" src="https://i.imgur.com/3KQjv1A.jpeg"><div class="game-name">Tile Slide</div></div>
+        <div class="game-tile" data-game="pizza"><img class="game-thumb" src="https://i.imgur.com/HV8Y1bE.jpeg"><div class="game-name">Pizza Maker</div></div>
+        <div class="game-tile" data-game="wings"><img class="game-thumb" src="https://i.imgur.com/9m7oY0U.jpeg"><div class="game-name">Wing Bar</div></div>
+        <div class="game-tile" data-game="pancake"><img class="game-thumb" src="https://i.imgur.com/U5Xk6wP.jpeg"><div class="game-name">Pancake Flip</div></div>
+        <div class="game-tile" data-game="paint"><img class="game-thumb" src="https://i.imgur.com/okYwfgf.jpeg"><div class="game-name">Pixel Painter</div></div>
+        <div class="game-tile" data-game="rps"><img class="game-thumb" src="https://i.imgur.com/eD2mV1k.jpeg"><div class="game-name">Rock Paper Scissors</div></div>
+      </div>
+    </div>
 
-        <div class="game-tile" data-game="tic">
-          <img src="https://i.imgur.com/0y0YF8k.jpeg" alt="TicTacToe">
-          <div class="game-name">Tic-Tac-Toe</div>
-        </div>
-
-        <div class="game-tile" data-game="memory">
-          <img src="https://i.imgur.com/dfzX6Zy.jpeg" alt="Memory">
-          <div class="game-name">Memory Match</div>
-        </div>
-
-        <div class="game-tile" data-game="runner">
-          <img src="https://i.imgur.com/0fQ2K4v.jpeg" alt="Runner">
-          <div class="game-name">Endless Runner</div>
-        </div>
-
-        <div class="game-tile" data-game="flappy">
-          <img src="https://i.imgur.com/7XcGf0K.jpeg" alt="Flappy">
-          <div class="game-name">Flappy Bird Clone</div>
-        </div>
-
-        <div class="game-tile" data-game="pong">
-          <img src="https://i.imgur.com/8hYb6sD.jpeg" alt="Pong">
-          <div class="game-name">Pong</div>
-        </div>
-
-        <div class="game-tile" data-game="breakout">
-          <img src="https://i.imgur.com/6kB8nF1.jpeg" alt="Breakout">
-          <div class="game-name">Breakout</div>
-        </div>
-
-        <div class="game-tile" data-game="tetris">
-          <img src="https://i.imgur.com/3KQjv1A.jpeg" alt="Tetris">
-          <div class="game-name">Tetris Mini</div>
-        </div>
-
-        <div class="game-tile" data-game="mines">
-          <img src="https://i.imgur.com/d1Qw1jG.jpeg" alt="Mines">
-          <div class="game-name">Minesweeper</div>
-        </div>
-
-        <div class="game-tile" data-game="whack">
-          <img src="https://i.imgur.com/Lg2w5Qm.jpeg" alt="Whack">
-          <div class="game-name">Whack-A-Mole</div>
-        </div>
-
-        <div class="game-tile" data-game="2048">
-          <img src="https://i.imgur.com/eD2mV1k.jpeg" alt="2048">
-          <div class="game-name">2048</div>
-        </div>
-
-        <div class="game-tile" data-game="subway">
-          <img src="https://i.imgur.com/9m7oY0U.jpeg" alt="Runner2">
-          <div class="game-name">City Runner (parkour)</div>
-        </div>
-
-        <div class="game-tile" data-game="painter">
-          <img src="https://i.imgur.com/HV8Y1bE.jpeg" alt="Painter">
-          <div class="game-name">Pixel Painter</div>
-        </div>
-
-        <div class="game-tile" data-game="jumpcube">
-          <img src="https://i.imgur.com/0jXQw2Q.jpeg" alt="JumpCube">
-          <div class="game-name">Jump Cube</div>
-        </div>
-
-        <div class="game-tile" data-game="breakout2">
-          <img src="https://i.imgur.com/M3gYp1X.jpeg" alt="Breakout2">
-          <div class="game-name">Arcade Breakout 2</div>
-        </div>
-
-      </div> <!-- games-grid -->
-    </div> <!-- gameArea -->
-
+    <!-- Play area -->
     <div id="playArea" class="card">
       <div class="play-header">
-        <div style="font-weight:800" id="playTitle">Ready to Play</div>
+        <div style="font-weight:900" id="playTitle">Ready</div>
         <div>
-          <button id="closePlay" class="ghost" style="border-radius:10px;padding:8px 10px">Close</button>
+          <button id="closeGame" class="btn btn-ghost">Close</button>
         </div>
       </div>
-      <div id="playInner" class="small"></div>
-      <div id="gameContent"></div>
+      <div id="playInner" class="small">Select a game tile to start — touch controls available on mobile.</div>
+      <div id="gameContent" style="margin-top:12px"></div>
     </div>
-
   </section>
 
-  <!-- notes -->
+  <!-- Notes & quick links -->
   <section class="card">
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-weight:800">Notes & Links</div>
-        <div class="muted">Save quick notes or links for class</div>
-      </div>
-      <div>
-        <button id="saveNotes" class="start-btn" style="background:#0ea5e9">Save Notes</button>
-      </div>
+      <div style="font-weight:900">Notes & Links</div>
+      <div class="muted">Saved locally</div>
     </div>
-
-    <div style="margin-top:10px">
-      <textarea id="notes" placeholder="Type notes here..." style="width:100%;min-height:90px;border-radius:8px;padding:10px;border:1px solid rgba(11,17,32,0.06)"></textarea>
-      <div style="margin-top:8px" class="muted">Notes are saved locally on your device.</div>
+    <div style="margin-top:8px">
+      <textarea id="notes" placeholder="Quick study notes..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button id="saveNotes" class="btn btn-primary">Save Notes</button>
+        <button id="clearNotes" class="btn btn-ghost">Clear</button>
+      </div>
     </div>
   </section>
 
 </main>
+<footer>Greenfield High • Practice Tools • Built for personal use</footer>
 
-<footer>Greenfield High • Practice Tools • For learning breaks</footer>
-
-<!-- ====== PART 1 SCRIPT START: basic UI + some lightweight game loaders ====== -->
+<!-- ----------- SCRIPT: UI + Games (all in-page) ----------- -->
 <script>
-/* UI handling */
-const openTools = document.getElementById('openTools');
-const startBtn = document.getElementById('startBtn');
-const gameArea = document.getElementById('gameArea');
+/* ---------- Utility & Unlock (triple-tap logo) ---------- */
+const logo = document.getElementById('logo');
+const gamesPanel = document.getElementById('gamesPanel');
 const playArea = document.getElementById('playArea');
-const playTitle = document.getElementById('playTitle');
 const gameContent = document.getElementById('gameContent');
-const gamesGrid = document.getElementById('gamesGrid');
-const closePlay = document.getElementById('closePlay');
+const playTitle = document.getElementById('playTitle');
+let tapCount = 0, tapTimer = null;
 
-openTools.addEventListener('click', ()=> {
-  gameArea.style.display = gameArea.style.display === 'block' ? 'none' : 'block';
-  if(gameArea.style.display === 'block') playArea.style.display = 'none';
+// check unlocked state
+if(localStorage.getItem('gf_unlocked') === '1') {
+  gamesPanel.style.display = 'block';
+}
+
+logo.addEventListener('click', ()=> {
+  tapCount++;
+  if(tapTimer) clearTimeout(tapTimer);
+  tapTimer = setTimeout(()=> { tapCount = 0; }, 1400);
+  if(tapCount >= 3){
+    // unlock
+    localStorage.setItem('gf_unlocked','1');
+    gamesPanel.style.display = 'block';
+    tapCount = 0;
+    alert('Practice Tools unlocked ✅');
+  }
 });
-startBtn.addEventListener('click', ()=> openTools.click());
 
-document.getElementById('saveNotes').addEventListener('click', ()=> {
-  localStorage.setItem('school_notes', document.getElementById('notes').value);
+/* ---------- Notes handling ---------- */
+const notesEl = document.getElementById('notes');
+document.getElementById('saveNotes').onclick = ()=> {
+  localStorage.setItem('gf_notes', notesEl.value);
   alert('Notes saved locally.');
-});
-document.getElementById('notes').value = localStorage.getItem('school_notes') || '';
+};
+document.getElementById('clearNotes').onclick = ()=> {
+  if(confirm('Clear notes?')) { notesEl.value=''; localStorage.removeItem('gf_notes'); }
+};
+notesEl.value = localStorage.getItem('gf_notes') || '';
 
-closePlay.addEventListener('click', ()=> {
+/* ---------- Open/Close UI ---------- */
+document.getElementById('startActivity').addEventListener('click', ()=> {
+  // reveal panel if unlocked, otherwise hint
+  if(localStorage.getItem('gf_unlocked') === '1') {
+    gamesPanel.style.display = gamesPanel.style.display === 'block' ? 'none' : 'block';
+  } else {
+    alert('Activate Practice Tools: Triple-tap the school logo (top-left).');
+  }
+});
+
+document.getElementById('closeGame').addEventListener('click', ()=> {
+  stopAllGames();
   gameContent.innerHTML = '';
   playArea.style.display = 'none';
+  playTitle.textContent = 'Ready';
 });
 
-/* setup tile click wiring */
-gamesGrid.querySelectorAll('.game-tile').forEach(tile=>{
-  tile.addEventListener('click', ()=> {
-    const g = tile.dataset.game;
+/* ---------- Wire up game tiles ---------- */
+document.querySelectorAll('.game-tile').forEach(t => {
+  t.addEventListener('click', ()=> {
+    const g = t.dataset.game;
     launchGame(g);
   });
 });
 
-/* Game launcher: will call functions defined in Part 2 */
+/* ---------- Stop all games (cleanup) ---------- */
+function stopAllGames(){
+  // stop intervals, audio, animations by resetting content
+  // many games use global timers stored on window, clear them
+  if(window._gameInterval) { clearInterval(window._gameInterval); window._gameInterval = null; }
+  if(window._gameRAF) { cancelAnimationFrame(window._gameRAF); window._gameRAF = null; }
+  // remove key listeners where needed
+  document.onkeydown = null;
+}
+
+/* ---------- Launcher ---------- */
 function launchGame(name){
-  // show play area
-  playTitle.textContent = 'Loading — ' + name;
+  stopAllGames();
   playArea.style.display = 'block';
-  gameContent.innerHTML = '<div class="muted">Preparing ' + name + '...</div>';
-  // small delay to show UI
+  playTitle.textContent = 'Loading...';
+  gameContent.innerHTML = '<div class="small">Preparing ' + name + '...</div>';
   setTimeout(()=> {
-    // these functions are implemented in Part 2:
-    // createSnake, createTic, createMemory, createRunner, createFlappy, createPong,
-    // createBreakout, createTetris, createMines, createWhack, create2048, createPainter,
-    // createJumpCube, createSubway (city runner), createBreakout2
-    if(typeof window['create'+capitalize(name)] === 'function'){
-      window['create'+capitalize(name)]();
-      playTitle.textContent = prettifyName(name);
-    } else if(name==='2048' && typeof create2048 === 'function'){
-      create2048();
-      playTitle.textContent = '2048';
-    } else {
-      gameContent.innerHTML = '<div class="muted">Game not loaded yet. Please wait for the full site code to finish loading (Part 2 will provide all games).</div>';
+    playTitle.textContent = prettify(name);
+    gameContent.innerHTML = ''; // clear
+    // call implementation
+    if(name === 'snake') createSnake();
+    else if(name === 'pong') createPong();
+    else if(name === 'memory') createMemory();
+    else if(name === 'flappy') createFlappy();
+    else if(name === 'runner') createRunner();
+    else if(name === 'bubble') createBubble();
+    else if(name === 'tile') createTileSlide();
+    else if(name === 'pizza') createPizzaMaker();
+    else if(name === 'wings') createWings();
+    else if(name === 'pancake') createPancakeFlip();
+    else if(name === 'paint') createPainter();
+    else if(name === 'rps') createRPS();
+    else gameContent.innerHTML = '<div class="small">Sorry — game not found.</div>';
+  }, 300);
+}
+
+function prettify(n){
+  const map = { pizza:'Pizza Maker', wings:'Wing Bar', pancake:'Pancake Flip', paint:'Pixel Painter', rps:'Rock Paper Scissors', tile:'Tile Slide', bubble:'Bubble Pop', runner:'City Runner' };
+  return map[n] || n.charAt(0).toUpperCase() + n.slice(1);
+}
+
+/* ---------- GAMES IMPLEMENTATIONS ---------- */
+
+/* 1) SNAKE (canvas) */
+function createSnake(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="snake" width="320" height="320"></canvas></div>';
+  const canvas = document.getElementById('snake'), ctx = canvas.getContext('2d');
+  const grid = 16;
+  let px = 8*grid, py = 8*grid, vx=grid, vy=0, tail=5, trail=[], ax = randPos(), ay = randPos();
+  function randPos(){ return Math.floor(Math.random()*(canvas.width/grid))*grid; }
+  function loop(){
+    px += vx; py += vy;
+    if(px < 0) px = canvas.width - grid; if(py < 0) py = canvas.height - grid;
+    if(px >= canvas.width) px = 0; if(py >= canvas.height) py = 0;
+    ctx.fillStyle = '#081226'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#ff9aa2'; ctx.fillRect(ax, ay, grid-2, grid-2);
+    ctx.fillStyle = '#9bf6ff';
+    trail.forEach(p=> ctx.fillRect(p.x, p.y, grid-2, grid-2));
+    trail.push({x:px, y:py}); while(trail.length > tail) trail.shift();
+    if(Math.abs(px-ax) < 2 && Math.abs(py-ay) < 2){ tail++; ax=randPos(); ay=randPos(); }
+    // collision with self
+    for(let i=0;i<trail.length-1;i++){ if(trail[i].x === px && trail[i].y === py){ tail = 5; trail = []; break; } }
+  }
+  window._gameInterval = setInterval(loop, 110);
+  // controls
+  document.onkeydown = e => {
+    if(e.key === 'ArrowUp' && vy === 0){ vx = 0; vy = -grid; }
+    if(e.key === 'ArrowDown' && vy === 0){ vx = 0; vy = grid; }
+    if(e.key === 'ArrowLeft' && vx === 0){ vx = -grid; vy = 0; }
+    if(e.key === 'ArrowRight' && vx === 0){ vx = grid; vy = 0; }
+  };
+}
+
+/* 2) PONG (single-player vs simple AI) */
+function createPong(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="pong" width="420" height="300"></canvas><div style="margin-top:8px;color:var(--muted)">Use Arrow Up/Down or touch above/below right side</div></div>';
+  const c = document.getElementById('pong'), ctx = c.getContext('2d');
+  let pY = 120, aiY = 120, ball = {x:200,y:150,vx:3,vy:2}, pScore=0, aiScore=0;
+  function loop(){
+    ctx.fillStyle = '#0b1220'; ctx.fillRect(0,0,c.width,c.height);
+    // paddles
+    ctx.fillStyle = '#fff'; ctx.fillRect(10,pY,10,60); ctx.fillRect(c.width-20,aiY,10,60);
+    // ball
+    ctx.fillRect(ball.x,ball.y,10,10);
+    ball.x += ball.vx; ball.y += ball.vy;
+    if(ball.y < 0 || ball.y > c.height-10) ball.vy *= -1;
+    // collisions
+    if(ball.x < 30 && ball.y > pY && ball.y < pY+60){ ball.vx *= -1 }
+    if(ball.x > c.width-40 && ball.y > aiY && ball.y < aiY+60){ ball.vx *= -1 }
+    // ai follows ball
+    aiY += (ball.y - (aiY+30)) * 0.07;
+    // score
+    if(ball.x < 0){ aiScore++; resetBall(); }
+    if(ball.x > c.width){ pScore++; resetBall(); }
+    // HUD
+    ctx.fillStyle = '#fff'; ctx.font = '14px sans-serif'; ctx.fillText('You: '+pScore, 40,20); ctx.fillText('AI: '+aiScore, c.width-80,20);
+    window._gameRAF = requestAnimationFrame(loop);
+  }
+  function resetBall(){ ball.x = c.width/2; ball.y = c.height/2; ball.vx = (Math.random()>0.5?3:-3); ball.vy = (Math.random()*4-2); }
+  // touch controls
+  c.addEventListener('touchstart', function(e){
+    const y = e.touches[0].clientY - c.getBoundingClientRect().top;
+    if(e.touches[0].clientX > c.width/2) { // move paddle
+      pY = y - 30;
     }
-  }, 400);
+  });
+  document.onkeydown = e => { if(e.key === 'ArrowUp') pY -= 14; if(e.key==='ArrowDown') pY += 14; };
+  resetBall(); loop();
 }
 
-/* helpers */
-function capitalize(s){
-  if(!s) return s;
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-function prettifyName(n){
-  if(n==='tic') return 'Tic-Tac-Toe';
-  if(n==='2048') return '2048';
-  if(n==='breakout2') return 'Arcade Breakout 2';
-  if(n==='subway') return 'City Runner';
-  if(n==='jumpcube') return 'Jump Cube';
-  return capitalize(n);
-}
-
-/* show help */
-document.getElementById('helpBtn').addEventListener('click', ()=> {
-  alert('Classroom Resources: Click Start Activity → choose a game tile → play inside the page. Controls: most games support touch; some support keyboard (arrow keys/space).');
-});
-
-/* small safety */
-window.addEventListener('pagehide', ()=> { document.querySelectorAll('video').forEach(v=>v.pause()); });
-</script>
-/* ---------- PART 2 START ---------- */
-
-// ========== GAME DATA ==========
-const games = [
-  {name: "Subway Surfer Runner", file: "subway"},
-  {name: "Snake", file: "snake"},
-  {name: "Tic Tac Toe", file: "tictactoe"},
-  {name: "Memory Match", file: "memory"},
-  {name: "2048", file: "2048"},
-  {name: "Pong", file: "pong"},
-  {name: "Breakout", file: "breakout"},
-  {name: "Flappy Bird", file: "flappy"},
-  {name: "Tetris", file: "tetris"},
-  {name: "Minesweeper", file: "mines"},
-  {name: "Whack a Mole", file: "mole"},
-  {name: "Parkour Jump", file: "jump"},
-  {name: "Pixel Draw", file: "draw"},
-  {name: "Car Dodger", file: "car"},
-  {name: "Space Shooter", file: "space"},
-  {name: "Stack Tower", file: "stack"},
-  {name: "Fruit Slicer", file: "fruit"},
-  {name: "Temple Escape", file: "temple"},
-  {name: "Hover Skate", file: "skate"},
-  {name: "Color Switch", file: "color"}
-];
-
-const gameGrid = document.getElementById('gameGrid');
-const frame = document.getElementById('gameFrame');
-
-games.forEach(g => {
-  const card = document.createElement('div');
-  card.className = "game-card";
-  card.innerHTML = `<h3>${g.name}</h3><button>Play</button>`;
-  card.onclick = () => launchGame(g.file);
-  gameGrid.appendChild(card);
-});
-
-function launchGame(game) {
-  frame.style.display = "block";
-  frame.src = game + ".html";
-  frame.scrollIntoView({ behavior: 'smooth' });
+/* 3) MEMORY MATCH */
+function createMemory(){
+  const items = ['🍎','🍔','🍕','🐶','🌟','🚀','🍩','🌊'];
+  let cards = items.concat(items).sort(()=>Math.random()-0.5);
+  let flipped = [], matched = [];
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Memory Match</div><div id="memGrid" class="mem-grid"></div><div style="margin-top:10px"><button id="resetMem" class="btn btn-ghost">Reset</button></div></div>';
+  const grid = document.getElementById('memGrid');
+  function draw(){
+    grid.innerHTML = '';
+    cards.forEach((c,i)=>{
+      const el = document.createElement('div'); el.className='mem-card'; el.textContent = matched.includes(i) || flipped.includes(i) ? cards[i] : '❓';
+      el.onclick = ()=>{ if(flipped.includes(i) || matched.includes(i)) return; flipped.push(i); draw(); if(flipped.length===2) setTimeout(check,500); };
+      grid.appendChild(el);
+    })
+  }
+  function check(){
+    const [a,b] = flipped;
+    if(cards[a] === cards[b]) { matched.push(a,b); }
+    flipped = []; draw();
+    if(matched.length === cards.length) setTimeout(()=>alert('You matched them all!'),200);
+  }
+  document.getElementById('resetMem').onclick = ()=>{ cards = items.concat(items).sort(()=>Math.random()-0.5); flipped=[]; matched=[]; draw(); };
+  draw();
 }
 
-// ========== SIMPLE BUILT-IN GAME TEMPLATES ==========
-const gameTemplates = {
-subway: `
-<style>
-body{margin:0;background:#222;overflow:hidden;font-family:sans-serif;color:white;text-align:center}
-#player{width:40px;height:60px;background:red;position:absolute;bottom:80px;left:50%}
-.ob{width:40px;height:40px;background:yellow;position:absolute;animation:ob 2s linear infinite}
-@keyframes ob{from{top:-50px}to{top:110%}}
-</style>
-<h2>Subway Runner (Mini)</h2>
-<div id="player"></div>
-<script>
-let p = document.getElementById("player");
-document.addEventListener("keydown", e=>{
-  if(e.key==="ArrowLeft") p.style.left=parseInt(p.style.left)-20+"px";
-  if(e.key==="ArrowRight") p.style.left=parseInt(p.style.left)+20+"px";
-});
-setInterval(()=>{
-  let o=document.createElement("div");
-  o.className="ob";
-  o.style.left=Math.random()*90+"%";
-  document.body.appendChild(o);
-  setTimeout(()=>o.remove(),2000);
-},800);
-</script>
-`,
-
-snake: `
-<canvas id='c' width='400' height='400'></canvas>
-<script>
-const c=document.getElementById('c'),x=c.getContext('2d');
-let t=20,s=[{x:200,y:200}],d={x:t,y:0},f={x:100,y:100};
-setInterval(()=>{
-  s.unshift({x:s[0].x+d.x,y:s[0].y+d.y});
-  if(s[0].x==f.x&&s[0].y==f.y)f={x:~~(Math.random()*20)*t,y:~~(Math.random()*20)*t};else s.pop();
-  x.fillStyle="#111";x.fillRect(0,0,400,400);
-  x.fillStyle="lime";s.forEach(p=>x.fillRect(p.x,p.y,t,t));
-  x.fillStyle="red";x.fillRect(f.x,f.y,t,t);
-},120);
-document.onkeydown=e=>d=e.key=="ArrowUp"?{x:0,y:-t}:e.key=="ArrowDown"?{x:0,y:t}:e.key=="ArrowLeft"?{x:-t,y:0}:e.key=="ArrowRight"?{x:t,y:0}:d;
-</script>
-`,
-tictactoe:`<h2>Tic Tac Toe</h2><p>Coming soon: vs AI mode</p>`,
-memory:`<h2>Memory Match</h2><p>Find the pairs!</p>`,
-"2048":`<h2>2048</h2><p>Swipe to play (coming soon!)</p>`,
-pong:`<h2>Pong</h2><p>Two player paddle game</p>`,
-breakout:`<h2>Breakout</h2><p>Break all blocks!</p>`,
-flappy:`<h2>Flappy Bird</h2><p>Tap to fly</p>`,
-tetris:`<h2>Tetris</h2><p>Classic falling blocks</p>`,
-mines:`<h2>Minesweeper</h2><p>Don't hit the bomb!</p>`,
-mole:`<h2>Whack a Mole</h2>`,
-jump:`<h2>Parkour Jump</h2>`,
-draw:`<h2>Pixel Draw</h2>`,
-car:`<h2>Car Dodge</h2>`,
-space:`<h2>Space Shooter</h2>`,
-stack:`<h2>Stack Tower</h2>`,
-fruit:`<h2>Fruit Slice</h2>`,
-temple:`<h2>Temple Escape</h2>`,
-skate:`<h2>Hover Skate</h2>`,
-color:`<h2>Color Switch</h2>`
-};
-
-for (let g in gameTemplates) {
-  const blob = new Blob([gameTemplates[g]], {type:"text/html"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = g + ".html";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+/* 4) FLAPPY (simple tap to rise) */
+function createFlappy(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="flappy" width="320" height="420"></canvas><div style="margin-top:8px" class="small">Tap to flap</div></div>';
+  const c=document.getElementById('flappy'), ctx=c.getContext('2d');
+  let bird = {x:60,y:200,vy:0}, pipes = [], frame=0, score=0, alive=true;
+  function loop(){
+    frame++; ctx.fillStyle = '#70c5ff'; ctx.fillRect(0,0,c.width,c.height);
+    bird.vy += 0.6; bird.y += bird.vy;
+    // ground/ceiling
+    if(bird.y < 0) bird.y = 0; if(bird.y > c.height-20) { alive=false; }
+    // pipes
+    if(frame % 90 === 0) { const gap = 100 + Math.random()*40; const top = 40 + Math.random()*100; pipes.push({x:c.width, top:top, gap:gap}); }
+    for(let i=pipes.length-1;i>=0;i--){
+      pipes[i].x -= 2.8;
+      ctx.fillStyle = '#2d6a4f';
+      ctx.fillRect(pipes[i].x, 0, 40, pipes[i].top);
+      ctx.fillRect(pipes[i].x, pipes[i].top + pipes[i].gap, 40, c.height);
+      // collision
+      if(bird.x + 20 > pipes[i].x && bird.x < pipes[i].x + 40){
+        if(bird.y < pipes[i].top || bird.y + 16 > pipes[i].top + pipes[i].gap) alive=false;
+      }
+      if(pipes[i].x + 40 < 0) { pipes.splice(i,1); score++; }
+    }
+    ctx.fillStyle='yellow'; ctx.fillRect(bird.x, bird.y, 20, 16);
+    ctx.fillStyle='white'; ctx.fillText('Score: '+score, 10, 20);
+    if(alive) window._gameRAF = requestAnimationFrame(loop); else ctx.fillText('Game Over - tap Restart', 90, 200);
+  }
+  c.addEventListener('touchstart', ()=> { bird.vy = -8; if(!alive){ pipes=[]; bird.y=200; bird.vy=0; frame=0; score=0; alive=true; loop(); } });
+  document.addEventListener('keydown', e=> { if(e.key===' ') bird.vy=-8; });
+  loop();
 }
 
-/* ---------- PART 2 END ---------- */
+/* 5) RUNNER (simple endless dodger) */
+function createRunner(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="run" width="480" height="200"></canvas><div style="margin-top:8px" class="small">Tap to jump / use Space</div></div>';
+  const c = document.getElementById('run'), ctx = c.getContext('2d');
+  let x = 40, y = 150, vy = 0, grav = 0.9;
+  let obs = [], frame = 0, score = 0, alive = true;
+  function spawn(){ if(frame % 90 === 0) obs.push({x:c.width, w:20, h:20 + Math.random()*40}); }
+  function loop(){
+    frame++; ctx.fillStyle='#2b2b2b'; ctx.fillRect(0,0,c.width,c.height);
+    vy += grav; y += vy; if(y > 170){ y = 170; vy = 0; }
+    ctx.fillStyle='#ffcf33'; ctx.fillRect(x, y-20, 24, 24);
+    for(let i=obs.length-1;i>=0;i--){ obs[i].x -= 5; ctx.fillStyle='#ef476f'; ctx.fillRect(obs[i].x, c.height - obs[i].h, obs[i].w, obs[i].h); if(obs[i].x + obs[i].w < 0) { obs.splice(i,1); score++; } if(collide(obs[i])) alive=false; }
+    ctx.fillStyle='white'; ctx.fillText('Score: '+score, 10, 20);
+    if(alive) window._gameRAF = requestAnimationFrame(loop);
+    else ctx.fillText('Game Over - tap Restart', 120, 100);
+  }
+  function collide(o){ return x < o.x + o.w && x + 24 > o.x && y-20 < c.height && y > c.height - o.h; }
+  c.addEventListener('touchstart', ()=>{ if(y >= 170) vy = -12; if(!alive){ obs=[]; frame=0; score=0; alive=true; y=150; vy=0; loop(); } });
+  document.addEventListener('keydown', e => { if(e.key === ' ' || e.key === 'ArrowUp') if(y >= 170) vy = -12; });
+  loop();
+}
+
+/* 6) BUBBLE POP (tap bubbles) */
+function createBubble(){
+  gameContent.innerHTML = '<div style="text-align:center"><canvas id="bubble" width="360" height="420"></canvas><div style="margin-top:8px" class="small">Tap bubbles to pop</div></div>';
+  const c=document.getElementById('bubble'), ctx=c.getContext('2d');
+  let bubbles = [], score = 0;
+  function spawn(){ if(Math.random() < 0.06) bubbles.push({x:Math.random()*c.width,y:c.height+10,r:10+Math.random()*18,vy:1+Math.random()*2}); }
+  function loop(){ ctx.clearRect(0,0,c.width,c.height); spawn(); for(let i=bubbles.length-1;i>=0;i--){ bubbles[i].y -= bubbles[i].vy; ctx.beginPath(); ctx.fillStyle='rgba(255,122,198,0.9)'; ctx.arc(bubbles[i].x,bubbles[i].y,bubbles[i].r,0,Math.PI*2); ctx.fill(); if(bubbles[i].y + bubbles[i].r < 0) bubbles.splice(i,1); } ctx.fillStyle='#fff'; ctx.fillText('Score: '+score,10,20); window._gameRAF = requestAnimationFrame(loop); }
+  c.addEventListener('touchstart', e => { const rect=c.getBoundingClientRect(); const x=e.touches[0].clientX-rect.left, y=e.touches[0].clientY-rect.top; for(let i=bubbles.length-1;i>=0;i--){ const b=bubbles[i]; if(Math.hypot(b.x-x,b.y-y) < b.r){ score++; bubbles.splice(i,1); } } });
+  loop();
+}
+
+/* 7) TILE SLIDE (15 puzzle) */
+function createTileSlide(){
+  // simple 3x3 for smaller screen fit
+  const size = 3;
+  let arr = [];
+  for(let i=1;i<size*size;i++) arr.push(i);
+  arr.push(null);
+  arr = shuffle(arr);
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Tile Slide</div><div id="tileBoard" style="width:240px;margin:0 auto;display:grid;grid-template-columns:repeat(3,80px);gap:6px"></div><div style="margin-top:8px"><button id="shuffleBtn" class="btn btn-ghost">Shuffle</button></div></div>';
+  const board = document.getElementById('tileBoard');
+  function draw(){
+    board.innerHTML = '';
+    arr.forEach((v,i)=>{
+      const el = document.createElement('div'); el.style.height='80px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; el.style.borderRadius='8px'; el.style.fontWeight='800';
+      if(v===null){ el.style.background='#fff'; el.style.border='1px dashed rgba(0,0,0,0.06)'; el.textContent=''; } else { el.style.background='#ffd6e0'; el.textContent=v; }
+      el.onclick = ()=> { const pos = arr.indexOf(null); if(adjacent(i,pos)){ arr[pos]=arr[i]; arr[i]=null; draw(); checkWin(); } };
+      board.appendChild(el);
+    });
+  }
+  function adjacent(a,b){ const ax=a%size, ay=Math.floor(a/size); const bx=b%size, by=Math.floor(b/size); return (Math.abs(ax-bx)+Math.abs(ay-by))===1; }
+  function checkWin(){ if(arr.slice(0,-1).every((v,i)=>v === i+1)) setTimeout(()=>alert('Solved!'),100); }
+  document.getElementById('shuffleBtn').onclick = ()=>{ arr = shuffle(arr); draw(); };
+  draw();
+}
+
+/* 8) PIZZA MAKER (simple assembly) */
+function createPizzaMaker(){
+  gameContent.innerHTML = `
+  <div style="text-align:center">
+    <div style="font-weight:800;margin-bottom:8px">Pizza Maker</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px">
+      <button class="small" data-top="cheese">🧀 Cheese</button>
+      <button class="small" data-top="pepperoni">🍕 Pepperoni</button>
+      <button class="small" data-top="mush">🍄 Mushroom</button>
+      <button class="small" data-top="olives">🫒 Olives</button>
+      <button class="small" id="bakePizza">Bake 🍞</button>
+    </div>
+    <div id="pizzaArea" style="width:260px;height:260px;margin:0 auto;border-radius:50%;background:#f8e9d2;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative"></div>
+    <div style="margin-top:8px"><button id="resetPizza" class="btn btn-ghost">Reset</button></div>
+  </div>`;
+  const area = document.getElementById('pizzaArea');
+  const toppings = [];
+  gameContent.querySelectorAll('button[data-top]').forEach(b => b.addEventListener('click', ()=>{
+    const t = b.dataset.top; toppings.push(t);
+    const el = document.createElement('div'); el.style.position='absolute'; el.style.width='40px'; el.style.height='40px';
+    el.style.left = (20 + Math.random()*200) + 'px'; el.style.top = (20 + Math.random()*200) + 'px';
+    el.style.fontSize='24px';
+    el.textContent = t==='cheese'?'🧀':t==='pepperoni'?'🍕':t==='mush'?'🍄':'🫒';
+    area.appendChild(el);
+  }));
+  gameContent.querySelector('#bakePizza').onclick = ()=> {
+    if(toppings.length===0) { alert('Add some toppings!') ; return;}
+    alert('Baked! Serve your pizza 🍕');
+  };
+  gameContent.querySelector('#resetPizza').onclick = ()=> { area.innerHTML=''; toppings.length=0; };
+}
+
+/* 9) WING BAR (Wingstop style) */
+function createWings(){
+  gameContent.innerHTML = `
+  <div style="text-align:center">
+    <div style="font-weight:800;margin-bottom:8px">Wing Bar</div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px">
+      <button class="small" data-cook="fry">🔶 Fry</button>
+      <button class="small" data-cook="toss">🫗 Toss Sauce</button>
+      <button class="small" data-cook="serve">🍽️ Serve</button>
+    </div>
+    <div id="wingTrack" style="width:260px;height:160px;margin:0 auto;border-radius:8px;background:#fff3e0;display:flex;align-items:center;justify-content:center;flex-direction:column">
+      <div id="wingState" style="font-weight:700">Raw Wings</div>
+      <div id="wingLog" style="font-size:12px;color:var(--muted);margin-top:6px">Status: raw</div>
+    </div>
+    <div style="margin-top:8px"><button id="resetWings" class="btn btn-ghost">Reset</button></div>
+  </div>`;
+  const state = document.getElementById('wingState');
+  const log = document.getElementById('wingLog');
+  let stage = 0; // 0 raw,1 fried,2 sauced,3 served
+  gameContent.querySelectorAll('button[data-cook]').forEach(b=> b.addEventListener('click', ()=>{
+    const act = b.dataset.cook;
+    if(act==='fry' && stage===0){ stage=1; state.textContent='Frying...'; log.textContent='Status: frying'; setTimeout(()=>{ state.textContent='Crispy Wings'; log.textContent='Status: cooked'; },900); }
+    else if(act==='toss' && stage===1){ stage=2; state.textContent='Tossing Sauce...'; log.textContent='Status: saucing'; setTimeout(()=>{ state.textContent='Sauced Wings'; log.textContent='Status: sauced'; },700); }
+    else if(act==='serve' && stage===2){ stage=3; state.textContent='Served!'; log.textContent='Enjoy your wings 🍗'; alert('Order complete!'); }
+    else alert('Do steps in order: Fry → Toss Sauce → Serve');
+  }));
+  document.getElementById('resetWings').onclick = ()=> { stage=0; state.textContent='Raw Wings'; log.textContent='Status: raw' };
+}
+
+/* 10) PANCAKE FLIP (timing) */
+function createPancakeFlip(){
+  gameContent.innerHTML = `
+  <div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Pancake Flip</div>
+  <div id="panArea" style="width:240px;height:180px;margin:0 auto;border-radius:12px;background:#fff6e6;display:flex;align-items:center;justify-content:center;position:relative">
+    <div id="pancake" style="width:80px;height:60px;border-radius:40px;background:#f5cda5;position:absolute;bottom:30px"></div>
+  </div>
+  <div style="margin-top:10px"><button id="flipBtn" class="btn btn-primary">Flip!</button> <button id="resetPan" class="btn btn-ghost">Reset</button></div></div>`;
+  const pancake = document.getElementById('pancake');
+  let angle = 0, flipped = 0;
+  document.getElementById('flipBtn').onclick = ()=> {
+    // simple timing window
+    const success = Math.random() > 0.35; // random fun
+    if(success){ pancake.style.transform = 'translateY(-40px) rotate(180deg)'; setTimeout(()=>{ pancake.style.transform=''; alert('Nice flip!') },600); flipped++; }
+    else { pancake.style.transform = 'translateY(-20px) rotate(90deg)'; setTimeout(()=>{ pancake.style.transform=''; alert('Oops — try again') },600); }
+  };
+  document.getElementById('resetPan').onclick = ()=> { pancake.style.transform=''; flipped=0; };
+}
+
+/* 11) PIXEL PAINTER */
+function createPainter(){
+  gameContent.innerHTML = '<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Pixel Painter</div><div id="painterArea" style="width:100%;max-width:420px;margin:0 auto"></div><div style="margin-top:8px"><button id="clearPaint" class="btn btn-ghost">Clear</button></div></div>';
+  const area = document.getElementById('painterArea');
+  const grid = 20, rows = 16, cols = 24;
+  const table = document.createElement('div'); table.style.display='grid'; table.style.gridTemplateColumns = `repeat(${cols}, 1fr)`; table.style.gap='2px';
+  const cells = [];
+  for(let i=0;i<rows*cols;i++){ const c = document.createElement('div'); c.style.height='18px'; c.style.background='#fff'; c.style.borderRadius='3px'; c.style.border='1px solid rgba(0,0,0,0.03)'; c.addEventListener('touchstart', ()=> c.style.background = randomColor()); c.addEventListener('click', ()=> c.style.background = randomColor()); table.appendChild(c); cells.push(c); }
+  area.appendChild(table);
+  function randomColor(){ const colors = ['#ffadad','#ffd6a5','#fdffb6','#caffbf','#9bf6ff','#bdb2ff','#ffc6ff']; return colors[Math.floor(Math.random()*colors.length)]; }
+  document.getElementById('clearPaint').onclick = ()=> cells.forEach(c=> c.style.background='#fff');
+}
+
+/* 12) ROCK PAPER SCISSORS */
+function createRPS(){
+  gameContent.innerHTML = `<div style="text-align:center"><div style="font-weight:800;margin-bottom:8px">Rock Paper Scissors</div>
+    <div style="display:flex;gap:10px;justify-content:center"><button class="small" data-move="rock">🪨</button><button class="small" data-move="paper">📄</button><button class="small" data-move="scissors">✂️</button></div>
+    <div id="rpsRes" style="margin-top:12px;font-weight:700"></div></div>`;
+  gameContent.querySelectorAll('button[data-move]').forEach(b => b.addEventListener('click', ()=>{
+    const user = b.dataset.move;
+    const moves = ['rock','paper','scissors']; const comp = moves[Math.floor(Math.random()*3)];
+    const win = (user==='rock'&&comp==='scissors')||(user==='paper'&&comp==='rock')||(user==='scissors'&&comp==='paper');
+    const res = win? 'You win!': (user===comp?'Draw':'You lose');
+    document.getElementById('rpsRes').textContent = `You: ${user} • Opponent: ${comp} → ${res}`;
+  }));
+}
+
+/* ---------- end game implementations ---------- */
+
 </script>
 </body>
 </html>
-
