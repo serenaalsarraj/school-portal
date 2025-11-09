@@ -3,260 +3,457 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Classroom Resources</title>
+<title>School Portal — Classroom Resources</title>
+
+<!-- ====== STYLES (school look + disguised) ====== -->
 <style>
   :root{
-    --bg:#f3f6fb; --panel:#ffffff; --accent:#2b6ef6; --muted:#6b7280; --glass: rgba(255,255,255,0.6);
+    --bg1: #f6f8fb;
+    --panel:#ffffff;
+    --accent:#1d4ed8;
+    --muted:#4b5563;
+    --card-shadow: 0 6px 20px rgba(16,24,40,0.06);
   }
   *{box-sizing:border-box;font-family:Inter,system-ui,Arial,Helvetica,sans-serif}
-  body{margin:0;background:linear-gradient(180deg,#eef2ff 0%, #f9fbff 100%);min-height:100vh;color:#0b1220}
-  header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;background:var(--panel);box-shadow:0 6px 20px rgba(11,17,32,0.06);position:sticky;top:0}
-  .title{font-weight:700;font-size:18px}
-  .subtitle{font-size:12px;color:var(--muted)}
-  .container{max-width:980px;margin:18px auto;padding:14px}
-  .card{background:var(--panel);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 6px 18px rgba(11,17,32,0.04)}
-  .row{display:flex;gap:12px;flex-wrap:wrap}
-  button{background:var(--accent);color:white;padding:10px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
-  .ghost{background:transparent;border:1px solid rgba(11,17,32,0.06);color:var(--muted);padding:10px;border-radius:10px;cursor:pointer}
-  .tools{display:flex;gap:10px;align-items:center}
-  /* disguised area */
-  .top-note{font-size:13px;color:var(--muted)}
-  /* games area */
-  #gameArea{margin-top:12px;display:none}
-  .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
-  .game-tile{background:linear-gradient(180deg, rgba(255,255,255,0.7), rgba(250,250,250,0.6));padding:10px;border-radius:12px;text-align:center;cursor:pointer;border:1px solid rgba(11,17,32,0.04)}
-  .game-tile img{width:100%;height:96px;object-fit:cover;border-radius:8px}
-  .game-name{margin-top:8px;font-weight:700;color:#0b1220}
-  /* player area */
-  #playArea{margin-top:12px;background:var(--panel);padding:12px;border-radius:12px;min-height:260px;display:none}
-  .small-info{font-size:12px;color:var(--muted);margin-top:8px}
-  /* responsive */
-  @media (max-width:520px){
-    header{padding:12px}
-    .title{font-size:16px}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background: linear-gradient(180deg,#f5f8ff 0%, #eef2fb 100%);
+    color:#0b1220;
   }
-  /* simple footer */
-  footer{margin:20px auto;text-align:center;color:var(--muted);font-size:12px}
-  /* game canvas styling */
-  canvas{background:#081226;border-radius:8px;display:block;margin:0 auto;max-width:100%}
-  /* tic-tac-toe */
-  .ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:240px;margin:14px auto}
-  .ttt-cell{height:72px;background:linear-gradient(180deg,#fff,#f8fbff);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;border-radius:8px;cursor:pointer}
-  /* memory */
-  .mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:420px;margin:12px auto}
+
+  /* Header (school-like) */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 18px;
+    background:var(--panel);
+    box-shadow:var(--card-shadow);
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  .left {
+    display:flex; align-items:center; gap:12px;
+  }
+  .logo {
+    width:52px;height:52px;border-radius:10px;
+    background:linear-gradient(135deg,#fff,#eef6ff);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);
+    box-shadow:0 2px 8px rgba(29,78,216,0.12);
+    font-size:18px;
+  }
+  .school-title{font-weight:700;font-size:16px}
+  .school-sub{font-size:12px;color:var(--muted)}
+
+  .right {
+    display:flex; gap:10px; align-items:center;
+  }
+  .teacher {
+    text-align:right;
+  }
+  .teacher .tname {font-weight:700;}
+  .tools-btn {padding:8px 12px;border-radius:10px;border:1px solid rgba(11,17,32,0.06); background:transparent; cursor:pointer; font-weight:600;}
+  .start-btn {background:var(--accent); color:white; padding:9px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; box-shadow:0 6px 18px rgba(29,78,216,0.12);}
+
+  /* main container */
+  main{max-width:980px;margin:18px auto;padding:14px}
+  .card{background:var(--panel);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:var(--card-shadow)}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .muted{color:var(--muted);font-size:13px}
+
+  /* games grid disguised */
+  #gameArea{display:none;margin-top:12px}
+  .games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+  .game-tile{background:linear-gradient(180deg,#fff,#f7fbff);padding:8px;border-radius:12px;cursor:pointer;border:1px solid rgba(11,17,32,0.04);text-align:center;transition:transform .15s}
+  .game-tile:hover{transform:translateY(-4px)}
+  .game-tile img{width:100%;height:92px;object-fit:cover;border-radius:8px}
+  .game-name{margin-top:8px;font-weight:700;font-size:14px}
+
+  /* play area */
+  #playArea{display:none;margin-top:14px;background:linear-gradient(180deg,#fff,#fbfdff);padding:12px;border-radius:12px;min-height:320px;border:1px solid rgba(11,17,32,0.04)}
+  .play-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .small {font-size:13px;color:var(--muted)}
+
+  /* footer */
+  footer{text-align:center;color:var(--muted);font-size:12px;margin:18px 0}
+
+  /* responsive tweaks */
+  @media (max-width:520px){
+    .logo{width:44px;height:44px;font-size:16px}
+    .game-tile img{height:82px}
+  }
+
+  /* canvas/game sizing */
+  canvas{display:block;margin:10px auto;border-radius:8px;background:#081226}
+  .ttt-board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:270px;margin:10px auto}
+  .ttt-cell{height:78px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;cursor:pointer}
+  .mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:420px;margin:10px auto}
   .mem-card{height:90px;border-radius:8px;background:linear-gradient(180deg,#fff,#f5f9ff);display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer}
+
+  .mini {font-size:12px;color:#6b7280}
 </style>
 </head>
 <body>
+
+<!-- HEADER: looks like school portal -->
 <header>
-  <div>
-    <div class="title">Classroom Resources</div>
-    <div class="subtitle">Homework → Practice tools</div>
+  <div class="left">
+    <div class="logo">SCH</div>
+    <div>
+      <div class="school-title">Greenfield High — Resources</div>
+      <div class="school-sub">Student Portal • Grade 10</div>
+    </div>
   </div>
-  <div class="tools">
-    <div class="top-note">Teacher: Ms. Park</div>
-    <button id="openTools">Start Activity</button>
+
+  <div class="right">
+    <div class="teacher">
+      <div class="tname">Ms. Park</div>
+      <div class="mini">Classroom Lead</div>
+    </div>
+    <button id="helpBtn" class="tools-btn">Help</button>
+    <button id="startBtn" class="start-btn">Start Activity</button>
   </div>
 </header>
 
-<main class="container">
+<main>
+  <!-- top card -->
   <section class="card">
     <div style="display:flex;justify-content:space-between;align-items:center">
       <div>
-        <div style="font-weight:700">Practice Tools</div>
-        <div class="small-info">Quick activities for learning — click Start Activity to open</div>
+        <div style="font-weight:800">Practice Tools</div>
+        <div class="muted">Quick activities & practice games — suitable for short breaks</div>
       </div>
       <div>
-        <button id="openGames" class="ghost">Games (Tools)</button>
+        <button id="openTools" class="tools-btn">Open Tools</button>
       </div>
     </div>
 
-    <!-- DISGUISED GAMES GRID -->
-    <div id="gameArea">
-      <div class="games-grid">
+    <!-- hidden games panel -->
+    <div id="gameArea" class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-weight:700">Activity Pack — Games</div>
+        <div class="muted">Tap a game to launch (plays inside page)</div>
+      </div>
+
+      <div class="games-grid" id="gamesGrid">
+        <!-- game tiles (many) - tiles will be wired to load functions -->
+        <!-- We'll include many tiles; implementations come in script -->
         <div class="game-tile" data-game="snake">
-          <img src="https://i.imgur.com/2r7QfJp.jpeg" alt="">
+          <img src="https://i.imgur.com/2r7QfJp.jpeg" alt="Snake">
           <div class="game-name">Snake</div>
         </div>
+
         <div class="game-tile" data-game="tic">
-          <img src="https://i.imgur.com/0y0YF8k.jpeg" alt="">
+          <img src="https://i.imgur.com/0y0YF8k.jpeg" alt="TicTacToe">
           <div class="game-name">Tic-Tac-Toe</div>
         </div>
+
         <div class="game-tile" data-game="memory">
-          <img src="https://i.imgur.com/dfzX6Zy.jpeg" alt="">
+          <img src="https://i.imgur.com/dfzX6Zy.jpeg" alt="Memory">
           <div class="game-name">Memory Match</div>
         </div>
+
         <div class="game-tile" data-game="runner">
-          <img src="https://i.imgur.com/0fQ2K4v.jpeg" alt="">
+          <img src="https://i.imgur.com/0fQ2K4v.jpeg" alt="Runner">
           <div class="game-name">Endless Runner</div>
         </div>
+
+        <div class="game-tile" data-game="flappy">
+          <img src="https://i.imgur.com/7XcGf0K.jpeg" alt="Flappy">
+          <div class="game-name">Flappy Bird Clone</div>
+        </div>
+
+        <div class="game-tile" data-game="pong">
+          <img src="https://i.imgur.com/8hYb6sD.jpeg" alt="Pong">
+          <div class="game-name">Pong</div>
+        </div>
+
+        <div class="game-tile" data-game="breakout">
+          <img src="https://i.imgur.com/6kB8nF1.jpeg" alt="Breakout">
+          <div class="game-name">Breakout</div>
+        </div>
+
+        <div class="game-tile" data-game="tetris">
+          <img src="https://i.imgur.com/3KQjv1A.jpeg" alt="Tetris">
+          <div class="game-name">Tetris Mini</div>
+        </div>
+
+        <div class="game-tile" data-game="mines">
+          <img src="https://i.imgur.com/d1Qw1jG.jpeg" alt="Mines">
+          <div class="game-name">Minesweeper</div>
+        </div>
+
+        <div class="game-tile" data-game="whack">
+          <img src="https://i.imgur.com/Lg2w5Qm.jpeg" alt="Whack">
+          <div class="game-name">Whack-A-Mole</div>
+        </div>
+
+        <div class="game-tile" data-game="2048">
+          <img src="https://i.imgur.com/eD2mV1k.jpeg" alt="2048">
+          <div class="game-name">2048</div>
+        </div>
+
+        <div class="game-tile" data-game="subway">
+          <img src="https://i.imgur.com/9m7oY0U.jpeg" alt="Runner2">
+          <div class="game-name">City Runner (parkour)</div>
+        </div>
+
+        <div class="game-tile" data-game="painter">
+          <img src="https://i.imgur.com/HV8Y1bE.jpeg" alt="Painter">
+          <div class="game-name">Pixel Painter</div>
+        </div>
+
+        <div class="game-tile" data-game="jumpcube">
+          <img src="https://i.imgur.com/0jXQw2Q.jpeg" alt="JumpCube">
+          <div class="game-name">Jump Cube</div>
+        </div>
+
+        <div class="game-tile" data-game="breakout2">
+          <img src="https://i.imgur.com/M3gYp1X.jpeg" alt="Breakout2">
+          <div class="game-name">Arcade Breakout 2</div>
+        </div>
+
+      </div> <!-- games-grid -->
+    </div> <!-- gameArea -->
+
+    <div id="playArea" class="card">
+      <div class="play-header">
+        <div style="font-weight:800" id="playTitle">Ready to Play</div>
+        <div>
+          <button id="closePlay" class="ghost" style="border-radius:10px;padding:8px 10px">Close</button>
+        </div>
+      </div>
+      <div id="playInner" class="small"></div>
+      <div id="gameContent"></div>
+    </div>
+
+  </section>
+
+  <!-- notes -->
+  <section class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:800">Notes & Links</div>
+        <div class="muted">Save quick notes or links for class</div>
+      </div>
+      <div>
+        <button id="saveNotes" class="start-btn" style="background:#0ea5e9">Save Notes</button>
       </div>
     </div>
 
-    <div id="playArea"></div>
-  </section>
-
-  <section class="card">
-    <div style="font-weight:700">Notes / Quick Links</div>
-    <div class="small-info">This area is for study notes and useful links.</div>
-    <div style="margin-top:8px">
-      <textarea id="notes" placeholder="Your study notes..." style="width:100%;min-height:90px;border-radius:8px;padding:10px;border:1px solid rgba(11,17,32,0.06)"></textarea>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button id="saveNotes">Save</button>
-        <button id="clearNotes" class="ghost">Clear</button>
-      </div>
+    <div style="margin-top:10px">
+      <textarea id="notes" placeholder="Type notes here..." style="width:100%;min-height:90px;border-radius:8px;padding:10px;border:1px solid rgba(11,17,32,0.06)"></textarea>
+      <div style="margin-top:8px" class="muted">Notes are saved locally on your device.</div>
     </div>
   </section>
 
 </main>
 
-<footer>Made for personal practice • Works offline after first load</footer>
+<footer>Greenfield High • Practice Tools • For learning breaks</footer>
 
+<!-- ====== PART 1 SCRIPT START: basic UI + some lightweight game loaders ====== -->
 <script>
-/* UI controls */
-const openToolsBtn = document.getElementById('openTools');
-const openGamesBtn = document.getElementById('openGames');
+/* UI handling */
+const openTools = document.getElementById('openTools');
+const startBtn = document.getElementById('startBtn');
 const gameArea = document.getElementById('gameArea');
 const playArea = document.getElementById('playArea');
+const playTitle = document.getElementById('playTitle');
+const gameContent = document.getElementById('gameContent');
+const gamesGrid = document.getElementById('gamesGrid');
+const closePlay = document.getElementById('closePlay');
 
-openToolsBtn.addEventListener('click', ()=> {
+openTools.addEventListener('click', ()=> {
   gameArea.style.display = gameArea.style.display === 'block' ? 'none' : 'block';
+  if(gameArea.style.display === 'block') playArea.style.display = 'none';
+});
+startBtn.addEventListener('click', ()=> openTools.click());
+
+document.getElementById('saveNotes').addEventListener('click', ()=> {
+  localStorage.setItem('school_notes', document.getElementById('notes').value);
+  alert('Notes saved locally.');
+});
+document.getElementById('notes').value = localStorage.getItem('school_notes') || '';
+
+closePlay.addEventListener('click', ()=> {
+  gameContent.innerHTML = '';
   playArea.style.display = 'none';
 });
-openGamesBtn.addEventListener('click', ()=> openToolsBtn.click());
 
-/* Notes */
-const notesEl = document.getElementById('notes');
-document.getElementById('saveNotes').onclick = ()=>{
-  localStorage.setItem('school_notes', notesEl.value);
-  alert('Saved');
-}
-document.getElementById('clearNotes').onclick = ()=>{
-  if(confirm('Clear notes?')){ notesEl.value=''; localStorage.removeItem('school_notes'); }
-}
-notesEl.value = localStorage.getItem('school_notes') || '';
+/* setup tile click wiring */
+gamesGrid.querySelectorAll('.game-tile').forEach(tile=>{
+  tile.addEventListener('click', ()=> {
+    const g = tile.dataset.game;
+    launchGame(g);
+  });
+});
 
-/* Game selection */
-document.querySelectorAll('.game-tile').forEach(t => t.addEventListener('click', () => {
-  const g = t.dataset.game;
-  loadGame(g);
-}));
-
-/* Helper: clear play area */
-function clearPlay(){
-  playArea.innerHTML = '';
-  playArea.style.display = 'none';
-}
-
-/* --- GAMES --- */
-
-/* 1) Simple Snake */
-function createSnake(){
-  playArea.innerHTML = '<div style="text-align:center"><div style="font-weight:700;margin-bottom:8px">Snake</div></div><canvas id="snakeCanvas" width="360" height="360"></canvas><div style="text-align:center;margin-top:8px"><button id="snakeRestart">Restart</button></div>';
-  playArea.style.display='block';
-  const canvas=document.getElementById('snakeCanvas'); const ctx=canvas.getContext('2d');
-  const grid=18; let vx=grid,vy=0; let px=grid*5,py=grid*5; let trail=[]; let tail=5; let ax=Math.floor(Math.random()*20)*grid, ay=Math.floor(Math.random()*20)*grid;
-  function loop(){
-    px+=vx; py+=vy;
-    if(px<0)px=canvas.width-grid; if(py<0)py=canvas.height-grid; if(px>=canvas.width)px=0; if(py>=canvas.height)py=0;
-    ctx.fillStyle='#081226'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#e6f1ff'; ctx.fillRect(ax,ay,grid-2,grid-2);
-    ctx.fillStyle='#6ef'; for(let i=0;i<trail.length;i++){ ctx.fillRect(trail[i].x, trail[i].y, grid-2, grid-2); if(trail[i].x===px && trail[i].y===py){ tail=5; } }
-    trail.push({x:px,y:py}); while(trail.length>tail)trail.shift();
-    if(Math.abs(px-ax)<2 && Math.abs(py-ay)<2){ tail++; ax=Math.floor(Math.random()*(canvas.width/grid))*grid; ay=Math.floor(Math.random()*(canvas.height/grid))*grid; }
-  }
-  let running = setInterval(loop,90);
-  window.addEventListener('keydown', function(e){ if(e.key==='ArrowUp'){ vx=0;vy=-grid } if(e.key==='ArrowDown'){ vx=0;vy=grid } if(e.key==='ArrowLeft'){ vx=-grid;vy=0 } if(e.key==='ArrowRight'){ vx=grid;vy=0 } })
-  document.getElementById('snakeRestart').onclick = ()=>{ px=grid*5;py=grid*5;trail=[];tail=5; }
+/* Game launcher: will call functions defined in Part 2 */
+function launchGame(name){
+  // show play area
+  playTitle.textContent = 'Loading — ' + name;
+  playArea.style.display = 'block';
+  gameContent.innerHTML = '<div class="muted">Preparing ' + name + '...</div>';
+  // small delay to show UI
+  setTimeout(()=> {
+    // these functions are implemented in Part 2:
+    // createSnake, createTic, createMemory, createRunner, createFlappy, createPong,
+    // createBreakout, createTetris, createMines, createWhack, create2048, createPainter,
+    // createJumpCube, createSubway (city runner), createBreakout2
+    if(typeof window['create'+capitalize(name)] === 'function'){
+      window['create'+capitalize(name)]();
+      playTitle.textContent = prettifyName(name);
+    } else if(name==='2048' && typeof create2048 === 'function'){
+      create2048();
+      playTitle.textContent = '2048';
+    } else {
+      gameContent.innerHTML = '<div class="muted">Game not loaded yet. Please wait for the full site code to finish loading (Part 2 will provide all games).</div>';
+    }
+  }, 400);
 }
 
-/* 2) Tic-Tac-Toe */
-function createTic(){
-  playArea.innerHTML = '<div style="text-align:center"><div style="font-weight:700;margin-bottom:8px">Tic-Tac-Toe</div></div><div id="ttt" style="text-align:center"><div class="ttt-board" id="board"></div><div style="margin-top:10px"><button id="tttRestart">Restart</button></div></div>';
-  playArea.style.display='block';
-  const boardEl=document.getElementById('board');
-  let board=[null,null,null,null,null,null,null,null,null];
-  let turn='X';
-  function draw(){
-    boardEl.innerHTML='';
-    board.forEach((v,i)=>{
-      const cell=document.createElement('div'); cell.className='ttt-cell'; cell.textContent=v||''; cell.onclick=()=>{ if(board[i])return; board[i]=turn; turn=turn==='X'?'O':'X'; draw(); checkWinner(); }
-      boardEl.appendChild(cell);
-    })
-  }
-  function checkWinner(){
-    const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-    for(const w of wins){ const [a,b,c]=w; if(board[a] && board[a]===board[b] && board[b]===board[c]){ alert(board[a] + ' wins!'); return } }
-    if(board.every(Boolean)){ alert('Draw'); }
-  }
-  document.getElementById('tttRestart').onclick = ()=>{ board=[null,null,null,null,null,null,null,null,null]; turn='X'; draw(); }
-  draw();
+/* helpers */
+function capitalize(s){
+  if(!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function prettifyName(n){
+  if(n==='tic') return 'Tic-Tac-Toe';
+  if(n==='2048') return '2048';
+  if(n==='breakout2') return 'Arcade Breakout 2';
+  if(n==='subway') return 'City Runner';
+  if(n==='jumpcube') return 'Jump Cube';
+  return capitalize(n);
 }
 
-/* 3) Memory Match */
-function createMemory(){
-  playArea.innerHTML = '<div style="text-align:center"><div style="font-weight:700;margin-bottom:8px">Memory Match</div></div><div class="mem-grid" id="memGrid"></div><div style="text-align:center;margin-top:10px"><button id="memReset">Reset</button></div>';
-  playArea.style.display='block';
-  const images = ['🍎','🐶','🌟','🚀','🍩','🌊','🎵','🌸'];
-  let cards = images.concat(images);
-  cards = cards.sort(()=>Math.random()-0.5);
-  const grid = document.getElementById('memGrid');
-  let flipped=[]; let matched=[];
-  function draw(){
-    grid.innerHTML='';
-    cards.forEach((c,i)=>{
-      const el=document.createElement('div'); el.className='mem-card'; el.textContent = matched.includes(i) || flipped.includes(i) ? cards[i] : '❓';
-      el.onclick = ()=>{ if(flipped.includes(i) || matched.includes(i))return; flipped.push(i); draw(); if(flipped.length===2){ setTimeout(check,400); } }
-      grid.appendChild(el);
-    })
-  }
-  function check(){
-    const [a,b]=flipped;
-    if(cards[a]===cards[b]){ matched.push(a,b); }
-    flipped=[]; draw();
-    if(matched.length===cards.length){ setTimeout(()=>alert('You matched all!'),200) }
-  }
-  document.getElementById('memReset').onclick = ()=>{ cards = images.concat(images).sort(()=>Math.random()-0.5); flipped=[]; matched=[]; draw(); }
-  draw();
+/* show help */
+document.getElementById('helpBtn').addEventListener('click', ()=> {
+  alert('Classroom Resources: Click Start Activity → choose a game tile → play inside the page. Controls: most games support touch; some support keyboard (arrow keys/space).');
+});
+
+/* small safety */
+window.addEventListener('pagehide', ()=> { document.querySelectorAll('video').forEach(v=>v.pause()); });
+</script>
+/* ---------- PART 2 START ---------- */
+
+// ========== GAME DATA ==========
+const games = [
+  {name: "Subway Surfer Runner", file: "subway"},
+  {name: "Snake", file: "snake"},
+  {name: "Tic Tac Toe", file: "tictactoe"},
+  {name: "Memory Match", file: "memory"},
+  {name: "2048", file: "2048"},
+  {name: "Pong", file: "pong"},
+  {name: "Breakout", file: "breakout"},
+  {name: "Flappy Bird", file: "flappy"},
+  {name: "Tetris", file: "tetris"},
+  {name: "Minesweeper", file: "mines"},
+  {name: "Whack a Mole", file: "mole"},
+  {name: "Parkour Jump", file: "jump"},
+  {name: "Pixel Draw", file: "draw"},
+  {name: "Car Dodger", file: "car"},
+  {name: "Space Shooter", file: "space"},
+  {name: "Stack Tower", file: "stack"},
+  {name: "Fruit Slicer", file: "fruit"},
+  {name: "Temple Escape", file: "temple"},
+  {name: "Hover Skate", file: "skate"},
+  {name: "Color Switch", file: "color"}
+];
+
+const gameGrid = document.getElementById('gameGrid');
+const frame = document.getElementById('gameFrame');
+
+games.forEach(g => {
+  const card = document.createElement('div');
+  card.className = "game-card";
+  card.innerHTML = `<h3>${g.name}</h3><button>Play</button>`;
+  card.onclick = () => launchGame(g.file);
+  gameGrid.appendChild(card);
+});
+
+function launchGame(game) {
+  frame.style.display = "block";
+  frame.src = game + ".html";
+  frame.scrollIntoView({ behavior: 'smooth' });
 }
 
-/* 4) Simple Runner */
-function createRunner(){
-  playArea.innerHTML = '<div style="text-align:center"><div style="font-weight:700;margin-bottom:8px">Endless Runner</div></div><canvas id="runCan" width="480" height="200"></canvas><div style="text-align:center;margin-top:8px"><button id="restartRun">Restart</button></div>';
-  playArea.style.display='block';
-  const canvas=document.getElementById('runCan'), ctx=canvas.getContext('2d');
-  let x=40,y=150,vy=0,grav=0.8,ob=[]; let frame=0,alive=true,score=0;
-  function spawn(){ if(frame%90===0){ ob.push({x:canvas.width, w:20, h:20 + Math.random()*40}); } }
-  function loop(){
-    frame++; ctx.fillStyle='#0b1220'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    // player
-    vy += grav; y += vy; if(y>170){ y=170; vy=0 }
-    ctx.fillStyle='#ffd166'; ctx.fillRect(x,y-20,24,24);
-    // obstacles
-    for(let i=ob.length-1;i>=0;i--){ ob[i].x -=4; ctx.fillStyle='#ef476f'; ctx.fillRect(ob[i].x, canvas.height - ob[i].h, ob[i].w, ob[i].h); if(ob[i].x+ob[i].w < 0) ob.splice(i,1), score++; if(collide(ob[i])){ alive=false } }
-    // score
-    ctx.fillStyle='white'; ctx.fillText('Score: ' + score, 10, 20);
-    if(alive) requestAnimationFrame(loop);
-    else ctx.fillText('Game Over - press Restart', 120, 100);
-  }
-  function collide(o){ return x < o.x + o.w && x + 24 > o.x && y-20 < canvas.height && y > canvas.height - o.h; }
-  window.addEventListener('keydown', e => { if(e.key===' ' || e.key==='ArrowUp'){ if(y>=170) vy=-12 } })
-  document.getElementById('restartRun').onclick = ()=>{ ob=[]; frame=0; score=0; alive=true; y=150; vy=0; loop(); }
-  loop(); // start
+// ========== SIMPLE BUILT-IN GAME TEMPLATES ==========
+const gameTemplates = {
+subway: `
+<style>
+body{margin:0;background:#222;overflow:hidden;font-family:sans-serif;color:white;text-align:center}
+#player{width:40px;height:60px;background:red;position:absolute;bottom:80px;left:50%}
+.ob{width:40px;height:40px;background:yellow;position:absolute;animation:ob 2s linear infinite}
+@keyframes ob{from{top:-50px}to{top:110%}}
+</style>
+<h2>Subway Runner (Mini)</h2>
+<div id="player"></div>
+<script>
+let p = document.getElementById("player");
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowLeft") p.style.left=parseInt(p.style.left)-20+"px";
+  if(e.key==="ArrowRight") p.style.left=parseInt(p.style.left)+20+"px";
+});
+setInterval(()=>{
+  let o=document.createElement("div");
+  o.className="ob";
+  o.style.left=Math.random()*90+"%";
+  document.body.appendChild(o);
+  setTimeout(()=>o.remove(),2000);
+},800);
+</script>
+`,
+
+snake: `
+<canvas id='c' width='400' height='400'></canvas>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d');
+let t=20,s=[{x:200,y:200}],d={x:t,y:0},f={x:100,y:100};
+setInterval(()=>{
+  s.unshift({x:s[0].x+d.x,y:s[0].y+d.y});
+  if(s[0].x==f.x&&s[0].y==f.y)f={x:~~(Math.random()*20)*t,y:~~(Math.random()*20)*t};else s.pop();
+  x.fillStyle="#111";x.fillRect(0,0,400,400);
+  x.fillStyle="lime";s.forEach(p=>x.fillRect(p.x,p.y,t,t));
+  x.fillStyle="red";x.fillRect(f.x,f.y,t,t);
+},120);
+document.onkeydown=e=>d=e.key=="ArrowUp"?{x:0,y:-t}:e.key=="ArrowDown"?{x:0,y:t}:e.key=="ArrowLeft"?{x:-t,y:0}:e.key=="ArrowRight"?{x:t,y:0}:d;
+</script>
+`,
+tictactoe:`<h2>Tic Tac Toe</h2><p>Coming soon: vs AI mode</p>`,
+memory:`<h2>Memory Match</h2><p>Find the pairs!</p>`,
+"2048":`<h2>2048</h2><p>Swipe to play (coming soon!)</p>`,
+pong:`<h2>Pong</h2><p>Two player paddle game</p>`,
+breakout:`<h2>Breakout</h2><p>Break all blocks!</p>`,
+flappy:`<h2>Flappy Bird</h2><p>Tap to fly</p>`,
+tetris:`<h2>Tetris</h2><p>Classic falling blocks</p>`,
+mines:`<h2>Minesweeper</h2><p>Don't hit the bomb!</p>`,
+mole:`<h2>Whack a Mole</h2>`,
+jump:`<h2>Parkour Jump</h2>`,
+draw:`<h2>Pixel Draw</h2>`,
+car:`<h2>Car Dodge</h2>`,
+space:`<h2>Space Shooter</h2>`,
+stack:`<h2>Stack Tower</h2>`,
+fruit:`<h2>Fruit Slice</h2>`,
+temple:`<h2>Temple Escape</h2>`,
+skate:`<h2>Hover Skate</h2>`,
+color:`<h2>Color Switch</h2>`
+};
+
+for (let g in gameTemplates) {
+  const blob = new Blob([gameTemplates[g]], {type:"text/html"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = g + ".html";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
 }
 
-/* load game selector */
-function loadGame(name){
-  playArea.innerHTML=''; playArea.style.display='block';
-  if(name==='snake'){ createSnake(); }
-  else if(name==='tic'){ createTic(); }
-  else if(name==='memory'){ createMemory(); }
-  else if(name==='runner'){ createRunner(); }
-  else { playArea.innerHTML='<div style="padding:18px">No game</div>' }
-}
-
-/* small safety: stop audio/video on navigation away */
-window.addEventListener('pagehide', ()=>{ document.querySelectorAll('video').forEach(v=>v.pause()); });
+/* ---------- PART 2 END ---------- */
 </script>
 </body>
 </html>
+
